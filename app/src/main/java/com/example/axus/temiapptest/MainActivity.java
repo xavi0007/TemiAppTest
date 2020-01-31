@@ -17,8 +17,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.robotemi.sdk.BatteryData;
@@ -41,7 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Robot.NlpListener, OnRobotReadyListener, Robot.ConversationViewAttachesListener, Robot.WakeupWordListener, Robot.ActivityStreamPublishListener, Robot.TtsListener, OnBeWithMeStatusChangedListener, OnGoToLocationStatusChangedListener, OnLocationsUpdatedListener, OnDetectionStateChangedListener, Robot.AsrListener, OnConstraintBeWithStatusChangedListener {
+public class MainActivity extends AppCompatActivity implements Robot.NlpListener, OnRobotReadyListener, Robot.ConversationViewAttachesListener, Robot.WakeupWordListener, Robot.ActivityStreamPublishListener, Robot.TtsListener, OnBeWithMeStatusChangedListener, OnGoToLocationStatusChangedListener, OnLocationsUpdatedListener, OnDetectionStateChangedListener, Robot.AsrListener, OnConstraintBeWithStatusChangedListener,AdapterView.OnItemSelectedListener {
 
 
     //variable declaration
@@ -50,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
-    public EditText etSpeak, etSaveLocation, etGoTo;
-
+    public EditText etSpeak, etSaveLocation;
+    public Spinner etGoTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         initiator.verifyStoragePermissions(this);
         robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
     }
+
 
 
     public void initViews() {
@@ -127,13 +130,30 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
      */
     public void goTo(View view) {
         for (String location : robot.getLocations()) {
-            if (location.equals(etGoTo.getText().toString().toLowerCase().trim())) {
-                robot.goTo(etGoTo.getText().toString().toLowerCase().trim());
+            if (location.equals(etGoTo.getSelectedItem().toString().toLowerCase().trim())) {
+                robot.goTo(etGoTo.getSelectedItem().toString().toLowerCase().trim());
                 hideKeyboard(MainActivity.this);
             }
         }
     }
+    //populate the spinner
+    public void setLocationSpinner(){
+        locations = robot.getLocations();
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,locations);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        etGoTo.setAdapter(aa);
+    }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        goTo(view);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
     /**
      * stopMovement() is used whenever you want the robot to stop any movement
      * it is currently doing.
@@ -428,5 +448,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     public void showTopBar(View view) {
         robot.showTopBar();
     }
+
 
 }
