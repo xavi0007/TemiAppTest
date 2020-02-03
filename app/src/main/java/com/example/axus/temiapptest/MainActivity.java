@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
-    public EditText etSpeak, etSaveLocation;
+    public EditText etSaveLocation;
     public Spinner etGoTo;
 
     @Override
@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
 
     public void initViews() {
-        etSpeak = findViewById(R.id.etSpeak);
         etSaveLocation = findViewById(R.id.etSaveLocation);
         etGoTo = findViewById(R.id.etGoTo);
     }
@@ -116,14 +115,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    /**
-     * Have the robot speak while displaying what is being said.
-     */
-    public void speak(View view) {
-        TtsRequest ttsRequest = TtsRequest.create(etSpeak.getText().toString().trim(), true);
-        robot.speak(ttsRequest);
-        hideKeyboard(MainActivity.this);
-    }
+//    /**
+//     * Have the robot speak while displaying what is being said.
+//     */
+//    public void speak(View view) {
+//        TtsRequest ttsRequest = TtsRequest.create(etSpeak.getText().toString().trim(), true);
+//        robot.speak(ttsRequest);
+//        hideKeyboard(MainActivity.this);
+//    }
 
     /**
      * goTo checks that the location sent is saved then goes to that location.
