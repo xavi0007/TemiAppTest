@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
-    public EditText etSaveLocation;
-    public Spinner etGoTo;
+    public EditText saveLocationInput;
+    public Spinner goToSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
 
     public void initViews() {
-        etSaveLocation = findViewById(R.id.etSaveLocation);
-        etGoTo = findViewById(R.id.etGoTo);
+        saveLocationInput = findViewById(R.id.saveLocationInput);
+        goToSpinner = findViewById(R.id.goToSpinner);
     }
 
     protected void onStart() {
@@ -129,8 +129,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
      */
     public void goTo(View view) {
         for (String location : robot.getLocations()) {
-            if (location.equals(etGoTo.getSelectedItem().toString().toLowerCase().trim())) {
-                robot.goTo(etGoTo.getSelectedItem().toString().toLowerCase().trim());
+            if (location.equals(goToSpinner.getSelectedItem().toString().toLowerCase().trim())) {
+                robot.goTo(goToSpinner.getSelectedItem().toString().toLowerCase().trim());
                 hideKeyboard(MainActivity.this);
             }
         }
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,locations);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Setting the ArrayAdapter data on the Spinner
-        etGoTo.setAdapter(aa);
+        goToSpinner.setAdapter(aa);
     }
 
     @Override
@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     }
 
     public void saveLocation(View view) {
-        String location = etSaveLocation.getText().toString().toLowerCase().trim();
+        String location = saveLocationInput.getText().toString().toLowerCase().trim();
         boolean result = robot.saveLocation(location);
         if (result) {
             robot.speak(TtsRequest.create("I've successfully saved the " + location + " location.", true));
