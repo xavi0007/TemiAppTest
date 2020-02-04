@@ -82,10 +82,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         locationSpinner = findViewById(R.id.locationSpinner);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
         btnSavedLocations = (Button) findViewById(R.id.btnSavedLocations);
-//        saveLocationInput.setVisibility(View.GONE);
-//        btnSaveLocation.setVisibility(View.GONE);
-//        btnSavedLocations.setVisibility(View.GONE);
+        Button ncsBtn = (Button) findViewById(R.id.ncsbtn);
+
+        //Hide everything irrelevant
+        saveLocationInput.setVisibility(View.GONE);
+        btnSaveLocation.setVisibility(View.GONE);
+        btnSavedLocations.setVisibility(View.GONE);
         setLocationSpinner();
+        robot.hideTopBar();
     }
 
     //hardware permissions
@@ -192,17 +196,12 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-//    public void adminMode(View view){
-//        ImageButton ncsBtn = (ImageButton) findViewById(R.id.ncsbtn);
-//        ncsBtn.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                saveLocationInput.setVisibility(View.VISIBLE);
-//                btnSaveLocation.setVisibility(View.VISIBLE);
-//                btnSavedLocations.setVisibility(View.VISIBLE);
-//                hideTopBar(this);
-//            }
-//        });
-//    }
+    public void adminMode(View view){
+        saveLocationInput.setVisibility(View.VISIBLE);
+        btnSaveLocation.setVisibility(View.VISIBLE);
+        btnSavedLocations.setVisibility(View.VISIBLE);
+        robot.showTopBar();
+    }
 
 //    /**
 //     * Have the robot speak while displaying what is being said.

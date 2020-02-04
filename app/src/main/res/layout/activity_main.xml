@@ -20,6 +20,7 @@
             android:layout_margin="17dp"
             android:background="@drawable/ncs_logo"
             android:text=""
+            android:onClick="adminMode"
             android:visibility="visible" />
 
         <EditText
