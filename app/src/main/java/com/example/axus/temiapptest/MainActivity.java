@@ -122,14 +122,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //populate the spinner
     public void setLocationSpinner(){
-        locations = new ArrayList<String>();
         locations = robot.getLocations();
         if(!locations.isEmpty()){
-            for(String location : locations){
-                Log.i("Saved_Location", location);
-                locations.add(location);
-            }
-            ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,locations);
+            final ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,locations);
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             //Setting the ArrayAdapter data on the Spinner
             locationSpinner.setAdapter(spinnerAdapter);
@@ -151,6 +146,18 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         setLocationSpinner();
     }
 
+    /**
+     * goTo checks that the location sent is saved then goes to that location.
+     */
+    public void goTo(View view) {
+
+        for (String location : robot.getLocations()) {
+            if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
+                robot.goTo(locationSpinner.getSelectedItem().toString().toLowerCase().trim());
+                hideKeyboard(MainActivity.this);
+            }
+        }
+    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -174,18 +181,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 //        hideKeyboard(MainActivity.this);
 //    }
 
-    /**
-     * goTo checks that the location sent is saved then goes to that location.
-     */
-    public void goTo(View view) {
 
-        for (String location : robot.getLocations()) {
-            if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
-                robot.goTo(locationSpinner.getSelectedItem().toString().toLowerCase().trim());
-                hideKeyboard(MainActivity.this);
-            }
-        }
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -385,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         });
         dialog.show();
     }
+
 
 
     /**
