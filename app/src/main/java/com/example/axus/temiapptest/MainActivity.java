@@ -1,7 +1,9 @@
 package com.example.axus.temiapptest;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.robotemi.sdk.BatteryData;
@@ -55,23 +58,36 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     public EditText saveLocationInput;
     public Spinner goToSpinner;
 
+    //permision variables
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        initViews();
-        //because static
-        initiator.verifyStoragePermissions(this);
+        init();
         robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
+        //destination.setText(locations.get(i));
     }
 
-
-
-    public void initViews() {
+    public void init() {
+        verifyStoragePermissions(this);
         saveLocationInput = findViewById(R.id.saveLocationInput);
         goToSpinner = findViewById(R.id.goToSpinner);
+        TextView destination = (TextView) findViewById(R.id.destination);
     }
+
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
 
     protected void onStart() {
         super.onStart();
@@ -90,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     protected void onStop() {
         super.onStop();
-        super.onStop();
         robot.removeOnRobotReadyListener(this);
         robot.removeNlpListener(this);
         robot.removeOnBeWithMeStatusChangedListener(this);
@@ -104,6 +119,16 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.stopMovement();
     }
 
+    //populate the spinner
+    public void setLocationSpinner(){
+        locations = robot.getLocations();
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,locations);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        goToSpinner.setAdapter(aa);
+    }
+
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -114,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+
 
 //    /**
 //     * Have the robot speak while displaying what is being said.
@@ -135,14 +162,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
             }
         }
     }
-    //populate the spinner
-    public void setLocationSpinner(){
-        locations = robot.getLocations();
-        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,locations);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Setting the ArrayAdapter data on the Spinner
-        goToSpinner.setAdapter(aa);
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -153,75 +172,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-    /**
-     * stopMovement() is used whenever you want the robot to stop any movement
-     * it is currently doing.
-     */
-    public void stopMovement(View view) {
-        robot.stopMovement();
-        robot.speak(TtsRequest.create("Stopping", true));
-    }
-
-    /**
-     * Simple follow me example.
-     */
-    public void followMe(View view) {
-        robot.beWithMe();
-        hideKeyboard(MainActivity.this);
-    }
-
-    /**
-     * Manually navigate the robot with skidJoy, tiltAngle, turnBy and tiltBy.
-     * skidJoy moves the robot exactly forward for about a second. It controls both
-     * the linear and angular velocity. Float numbers must be between -1.0 and 1.0
-     */
-    public void skidJoy(View view) {
-        long t = System.currentTimeMillis();
-        long end = t + 1000;
-        while (System.currentTimeMillis() < end) {
-            robot.skidJoy(1F, 0F);
-        }
-    }
-    /**
-     * tiltAngle controls temi's head by specifying which angle you want
-     * to tilt to and at which speed.
-     */
-    public void tiltAngle(View view) {
-        robot.tiltAngle(23, 5.3F);
-    }
-
-    /**
-     * turnBy allows for turning the robot around in place. You can specify
-     * the amount of degrees to turn by and at which speed.
-     */
-    public void turnBy(View view) {
-        robot.turnBy(180, 6.2F);
-    }
-
-    /**
-     * tiltBy is used to tilt temi's head from its current position.
-     */
-    public void tiltBy(View view) {
-        robot.tiltBy(70, 1.2F);
-    }
-
-    /**
-     * getBatteryData can be used to return the current battery status.
-     */
-    public void getBatteryData(View view) {
-        BatteryData batteryData = robot.getBatteryData();
-        if (batteryData.isCharging()) {
-            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and charging.", true);
-            robot.speak(ttsRequest);
-        } else {
-            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and not charging.", true);
-            robot.speak(ttsRequest);
-        }
-    }
-
-    /**
-     * Display the saved locations in a dialog
-     */
 
     @Override
     public void onPublish(@NotNull ActivityStreamPublishMessage activityStreamPublishMessage) {
@@ -256,6 +206,18 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
                 break;
         }
     }
+    public void tiltAngle(View view) {
+        robot.tiltAngle(23, 5.3F);
+    }
+
+    public void skidJoy(View view) {
+        long t = System.currentTimeMillis();
+        long end = t + 1000;
+        while (System.currentTimeMillis() < end) {
+            robot.skidJoy(1F, 0F);
+        }
+    }
+
 
     @Override
     public void onTtsStatusChanged(@NotNull TtsRequest ttsRequest) {
