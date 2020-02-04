@@ -21,12 +21,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.robotemi.sdk.BatteryData;
 import com.robotemi.sdk.MediaObject;
 import com.robotemi.sdk.NlpResult;
 import com.robotemi.sdk.Robot;
@@ -44,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Robot.NlpListener, OnRobotReadyListener, Robot.ConversationViewAttachesListener, Robot.WakeupWordListener, Robot.ActivityStreamPublishListener, Robot.TtsListener, OnBeWithMeStatusChangedListener, OnGoToLocationStatusChangedListener, OnLocationsUpdatedListener, OnDetectionStateChangedListener, Robot.AsrListener, OnConstraintBeWithStatusChangedListener,AdapterView.OnItemSelectedListener {
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
     public EditText saveLocationInput;
-    public Spinner goToSpinner;
+    public Spinner locationSpinner;
 
     //permision variables
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -69,12 +68,13 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         init();
         robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
         //destination.setText(locations.get(i));
+        getSupportActionBar().hide(); // hide the title bar
     }
 
     public void init() {
         verifyStoragePermissions(this);
         saveLocationInput = findViewById(R.id.saveLocationInput);
-        goToSpinner = findViewById(R.id.goToSpinner);
+        locationSpinner = findViewById(R.id.locationSpinner);
         TextView destination = (TextView) findViewById(R.id.destination);
     }
 
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.addOnConstraintBeWithStatusChangedListener(this);
         robot.addOnDetectionStateChangedListener(this);
         robot.addAsrListener(this);
+        setLocationSpinner();
     }
 
     protected void onStop() {
@@ -121,11 +122,33 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //populate the spinner
     public void setLocationSpinner(){
+        locations = new ArrayList<String>();
         locations = robot.getLocations();
-        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,locations);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Setting the ArrayAdapter data on the Spinner
-        goToSpinner.setAdapter(aa);
+        if(!locations.isEmpty()){
+            for(String location : locations){
+                Log.i("Saved_Location", location);
+                locations.add(location);
+            }
+            ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,locations);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            //Setting the ArrayAdapter data on the Spinner
+            locationSpinner.setAdapter(spinnerAdapter);
+        }
+        else{
+            Log.i("Saved_Location", "Empty");
+        }
+    }
+
+    public void saveLocation(View view) {
+        String location = saveLocationInput.getText().toString().toLowerCase().trim();
+        boolean result = robot.saveLocation(location);
+        if (result) {
+            robot.speak(TtsRequest.create("I've successfully saved the " + location + " location.", true));
+        } else {
+            robot.speak(TtsRequest.create("Saved the " + location + " location failed.", true));
+        }
+        hideKeyboard(MainActivity.this);
+        setLocationSpinner();
     }
 
 
@@ -155,9 +178,10 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
      * goTo checks that the location sent is saved then goes to that location.
      */
     public void goTo(View view) {
+
         for (String location : robot.getLocations()) {
-            if (location.equals(goToSpinner.getSelectedItem().toString().toLowerCase().trim())) {
-                robot.goTo(goToSpinner.getSelectedItem().toString().toLowerCase().trim());
+            if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
+                robot.goTo(locationSpinner.getSelectedItem().toString().toLowerCase().trim());
                 hideKeyboard(MainActivity.this);
             }
         }
@@ -362,16 +386,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         dialog.show();
     }
 
-    public void saveLocation(View view) {
-        String location = saveLocationInput.getText().toString().toLowerCase().trim();
-        boolean result = robot.saveLocation(location);
-        if (result) {
-            robot.speak(TtsRequest.create("I've successfully saved the " + location + " location.", true));
-        } else {
-            robot.speak(TtsRequest.create("Saved the " + location + " location failed.", true));
-        }
-        hideKeyboard(MainActivity.this);
-    }
 
     /**
      * publishToActivityStream takes an image stored in the resources folder

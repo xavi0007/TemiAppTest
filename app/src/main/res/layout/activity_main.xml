@@ -40,7 +40,7 @@
 
 
         <Spinner
-            android:id="@+id/goToSpinner"
+            android:id="@+id/locationSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="300dp"
@@ -48,7 +48,6 @@
             android:layout_marginRight="300dp"
             android:ems="10"
             android:gravity="center_horizontal"
-            android:inputType="textPersonName"
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorGrey"
             android:textSize="18sp" />
