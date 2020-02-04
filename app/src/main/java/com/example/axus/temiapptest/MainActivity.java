@@ -7,11 +7,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -20,7 +22,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
     public EditText saveLocationInput;
+    public Button btnSaveLocation, btnSavedLocations;
     public Spinner locationSpinner;
 
     //permision variables
@@ -63,21 +68,27 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        init();
-        robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
-        //destination.setText(locations.get(i));
         getSupportActionBar().hide(); // hide the title bar
+        init();
     }
 
     public void init() {
         verifyStoragePermissions(this);
+        checkCameraHardware(this);
         saveLocationInput = findViewById(R.id.saveLocationInput);
         locationSpinner = findViewById(R.id.locationSpinner);
-        TextView destination = (TextView) findViewById(R.id.destination);
+        btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
+        btnSavedLocations = (Button) findViewById(R.id.btnSavedLocations);
+//        saveLocationInput.setVisibility(View.GONE);
+//        btnSaveLocation.setVisibility(View.GONE);
+//        btnSavedLocations.setVisibility(View.GONE);
+        setLocationSpinner();
     }
 
+    //hardware permissions
 
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
@@ -88,6 +99,16 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
     }
 
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
 
     protected void onStart() {
         super.onStart();
@@ -102,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.addOnConstraintBeWithStatusChangedListener(this);
         robot.addOnDetectionStateChangedListener(this);
         robot.addAsrListener(this);
-        setLocationSpinner();
     }
 
     protected void onStop() {
@@ -150,9 +170,11 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
      * goTo checks that the location sent is saved then goes to that location.
      */
     public void goTo(View view) {
-
         for (String location : robot.getLocations()) {
-            if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
+            if(locationSpinner.getSelectedItem().toString() == ""){
+                setLocationSpinner();
+            }
+            else if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
                 robot.goTo(locationSpinner.getSelectedItem().toString().toLowerCase().trim());
                 hideKeyboard(MainActivity.this);
             }
@@ -170,7 +192,16 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-
+//    public void adminMode(View view){
+//        ImageButton ncsBtn = (ImageButton) findViewById(R.id.ncsbtn);
+//        ncsBtn.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                saveLocationInput.setVisibility(View.VISIBLE);
+//                btnSaveLocation.setVisibility(View.VISIBLE);
+//                btnSavedLocations.setVisibility(View.VISIBLE);
+//            }
+//        });
+//    }
 
 //    /**
 //     * Have the robot speak while displaying what is being said.
