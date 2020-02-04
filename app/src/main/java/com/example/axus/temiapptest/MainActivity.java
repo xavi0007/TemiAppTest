@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
      */
     public void goTo(View view) {
         for (String location : robot.getLocations()) {
-            if(locationSpinner.getSelectedItem().toString() == ""){
+            if(locationSpinner.getSelectedItem().toString().isEmpty()){
                 setLocationSpinner();
             }
             else if (location.equals(locationSpinner.getSelectedItem().toString().toLowerCase().trim())) {
@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 //                saveLocationInput.setVisibility(View.VISIBLE);
 //                btnSaveLocation.setVisibility(View.VISIBLE);
 //                btnSavedLocations.setVisibility(View.VISIBLE);
+//                hideTopBar(this);
 //            }
 //        });
 //    }

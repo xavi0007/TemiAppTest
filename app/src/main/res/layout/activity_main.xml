@@ -12,15 +12,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-<!--        <ImageButton-->
-<!--            android:id="@+id/ncsbtn"-->
-<!--            android:layout_width="186dp"-->
-<!--            android:layout_height="64dp"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_margin="17dp"-->
-<!--            android:background="@drawable/ncs_logo"-->
-<!--            android:text=""-->
-<!--            android:visibility="visible" />-->
+        <Button
+            android:id="@+id/ncsbtn"
+            android:layout_width="186dp"
+            android:layout_height="64dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="17dp"
+            android:background="@drawable/ncs_logo"
+            android:text=""
+            android:visibility="visible" />
 
         <EditText
             android:id="@+id/saveLocationInput"
@@ -65,25 +65,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="300dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="300dp"
+            android:dropDownWidth="match_parent"
             android:ems="10"
             android:gravity="center_horizontal"
+            android:spinnerMode="dropdown"
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorGrey"
-            android:textSize="80sp" />
+            android:textSize="100sp" />
 
         <Button
             android:id="@+id/btnGoTo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="300dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginRight="300dp"
             android:background="@color/colorLightTeal"
             android:onClick="goTo"
             android:text="@string/go_to"
             android:textSize="80sp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="1175dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="0dp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            android:focusable="true" />
 
     </LinearLayout>
 
