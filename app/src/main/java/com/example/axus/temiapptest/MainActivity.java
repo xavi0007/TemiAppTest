@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -83,17 +84,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
         btnSavedLocations = (Button) findViewById(R.id.btnSavedLocations);
         Button ncsBtn = (Button) findViewById(R.id.ncsbtn);
-
         //Hide everything irrelevant
         saveLocationInput.setVisibility(View.GONE);
         btnSaveLocation.setVisibility(View.GONE);
         btnSavedLocations.setVisibility(View.GONE);
         setLocationSpinner();
-        robot.hideTopBar();
     }
 
     //hardware permissions
-
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -127,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.addOnConstraintBeWithStatusChangedListener(this);
         robot.addOnDetectionStateChangedListener(this);
         robot.addAsrListener(this);
+        robot.hideTopBar();
     }
 
     protected void onStop() {
@@ -201,6 +200,13 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         btnSaveLocation.setVisibility(View.VISIBLE);
         btnSavedLocations.setVisibility(View.VISIBLE);
         robot.showTopBar();
+    }
+
+    public void startSurvillence(){
+        if(checkCameraHardware(this)){
+            Intent intent = new Intent(this, CameraActivity.class);
+            startActivity(intent);
+        }
     }
 
 //    /**
@@ -348,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
             try {
                 final ActivityInfo activityInfo = getPackageManager().getActivityInfo(getComponentName(), PackageManager.GET_META_DATA);
                 robot.onStart(activityInfo);
+                setLocationSpinner();
             } catch (PackageManager.NameNotFoundException e) {
                 throw new RuntimeException(e);
             }

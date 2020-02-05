@@ -96,6 +96,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginEnd="0dp"
             android:clickable="true"
+            android:onClick="startSurvillence"
             app:srcCompat="@android:drawable/ic_menu_camera"
             android:focusable="true" />
 
