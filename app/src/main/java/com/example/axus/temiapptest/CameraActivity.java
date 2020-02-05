@@ -6,6 +6,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class CameraActivity extends Activity {
         return c; // returns null if camera is unavailable
     }
 
-    public void finish(){
+    public void finish(View view){
         finish();
     }
 }
