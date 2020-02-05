@@ -41,4 +41,8 @@ public class CameraActivity extends Activity {
         }
         return c; // returns null if camera is unavailable
     }
+
+    public void finish(){
+        finish();
+    }
 }

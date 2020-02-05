@@ -2,6 +2,7 @@ package com.example.axus.temiapptest;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     //permision variables
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_CAMERA = 100;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +105,21 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
     /** Check if this device has a camera */
     private boolean checkCameraHardware(Context context) {
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("Camera", "Asking for camera permission");
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA);
+        }
+
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             // this device has a camera
+            Log.d("Camera", "Camera exist");
             return true;
         } else {
-            // no camera on this device
+            Log.d("Camera", "No camera");
             return false;
         }
+
     }
 
     protected void onStart() {
@@ -202,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.showTopBar();
     }
 
-    public void startSurvillence(){
+    public void startSurveillance(View view){
         if(checkCameraHardware(this)){
             Intent intent = new Intent(this, CameraActivity.class);
             startActivity(intent);
