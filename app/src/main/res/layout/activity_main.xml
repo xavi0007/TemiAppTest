@@ -34,6 +34,7 @@
             android:gravity="center_horizontal"
             android:hint="@string/enter_location"
             android:inputType="textPersonName"
+            android:textSize="30dp"
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorGrey" />
 
@@ -44,10 +45,11 @@
             android:layout_marginLeft="300dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="300dp"
-            android:background="@color/colorLightTeal"
+            android:background="@color/colorReplyBlue"
             android:onClick="saveLocation"
             android:text="@string/save_location"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textColor="@color/colorWhite"/>
 
         <Button
             android:id="@+id/btnSavedLocations"
@@ -56,10 +58,11 @@
             android:layout_marginLeft="300dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="300dp"
-            android:background="@color/colorLightTeal"
+            android:background="@color/colorReplyBlue"
             android:onClick="savedLocationsDialog"
             android:text="@string/delete_saved_locations"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textColor="@color/colorWhite"/>
 
         <Spinner
             android:id="@+id/locationSpinner"
@@ -72,9 +75,10 @@
             android:ems="10"
             android:gravity="center_horizontal"
             android:spinnerMode="dropdown"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:textColorHint="@color/colorGrey"
-            android:textSize="100sp" />
+            android:textSize="100sp"
+            />
 
         <Button
             android:id="@+id/btnGoTo"
@@ -83,18 +87,18 @@
             android:layout_marginLeft="300dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="300dp"
-            android:background="@color/colorLightTeal"
+            android:background="@color/colorReplyBlue"
             android:onClick="goTo"
             android:text="@string/go_to"
-            android:textSize="80sp" />
+            android:textSize="80sp"
+            android:textColor="@color/colorWhite"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="1175dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginEnd="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:clickable="true"
             android:onClick="startSurveillance"
             app:srcCompat="@android:drawable/ic_menu_camera"
