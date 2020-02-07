@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:id="@+id/ncsbtn"
             android:layout_width="186dp"
             android:layout_height="64dp"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="top|start"
             android:layout_margin="17dp"
             android:background="@drawable/ncs_logo"
             android:text=""
@@ -25,11 +25,10 @@
 
         <EditText
             android:id="@+id/saveLocationInput"
-            android:layout_width="675dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
             android:layout_marginTop="100dp"
-            android:layout_marginRight="300dp"
             android:ems="10"
             android:gravity="center_horizontal"
             android:hint="@string/enter_location"
@@ -40,12 +39,11 @@
 
         <Button
             android:id="@+id/btnSaveLocation"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="300dp"
-            android:background="@color/colorReplyBlue"
+            android:background="@drawable/button_shape"
             android:onClick="saveLocation"
             android:text="@string/save_location"
             android:textSize="18sp"
@@ -53,12 +51,11 @@
 
         <Button
             android:id="@+id/btnSavedLocations"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="300dp"
-            android:background="@color/colorReplyBlue"
+            android:background="@drawable/button_shape"
             android:onClick="savedLocationsDialog"
             android:text="@string/delete_saved_locations"
             android:textSize="18sp"
@@ -66,11 +63,10 @@
 
         <Spinner
             android:id="@+id/locationSpinner"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
             android:layout_marginTop="50dp"
-            android:layout_marginRight="300dp"
             android:dropDownWidth="match_parent"
             android:ems="10"
             android:gravity="center_horizontal"
@@ -82,12 +78,11 @@
 
         <Button
             android:id="@+id/btnGoTo"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:layout_marginRight="300dp"
-            android:background="@color/colorReplyBlue"
+            android:background="@drawable/button_shape"
             android:onClick="goTo"
             android:text="@string/go_to"
             android:textSize="80sp"
@@ -105,4 +100,4 @@
             android:focusable="true" />
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>
