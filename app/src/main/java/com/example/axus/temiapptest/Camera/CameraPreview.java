@@ -1,4 +1,4 @@
-package com.example.axus.temiapptest;
+package com.example.axus.temiapptest.Camera;
 
 import android.content.Context;
 import android.hardware.Camera;

@@ -1,4 +1,4 @@
-package com.example.axus.temiapptest;
+package com.example.axus.temiapptest.UIAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,12 +7,25 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.axus.temiapptest.R;
+
 import java.util.List;
 
 public class CustomAdapter extends ArrayAdapter<String> {
+
     private List<String> savedLocations;
 
-    CustomAdapter(Context context, int textViewResourceId, List<String> savedLocations) {
+    public List<String> getSavedLocations() {
+        return savedLocations;
+    }
+
+    public void setSavedLocations(List<String> savedLocations) {
+        this.savedLocations = savedLocations;
+    }
+
+
+
+    public CustomAdapter(Context context, int textViewResourceId, List<String> savedLocations) {
         super(context, textViewResourceId, savedLocations);
         this.savedLocations = savedLocations;
     }

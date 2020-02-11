@@ -1,17 +1,12 @@
-package com.example.axus.temiapptest;
+package com.example.axus.temiapptest.Camera;
 
 import android.app.Activity;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import java.io.IOException;
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+import com.example.axus.temiapptest.R;
 
 public class CameraActivity extends Activity {
     private static final String TAG = "camera";
