@@ -50,8 +50,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 
-import com.ncs.rtspstream.App;
-import com.ncs.rtspstream.MainActivity;
 
 import net.majorkernelpanic.streaming.MediaStream;
 import net.majorkernelpanic.streaming.Session;

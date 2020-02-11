@@ -1,4 +1,4 @@
-package com.example.axus.temiapptest.Protocols;
+package detection;
 
 import android.app.Activity;
 import android.app.Application;
@@ -51,7 +51,7 @@ public class MqttHelper {
     private static final String password = "NI6tT_zFV1DF";
 
     private MqttAndroidClient client;
-    private Application app;
+    private App app;
     private String clientId = MqttClient.generateClientId();
 
     public String publishRobotNotificationTopic = "RbNotification";
@@ -207,6 +207,7 @@ public class MqttHelper {
      * @param heading
      */
     public void publishRobotStatus(double battPercentage, String mapVerID, double positionX, double positionY, double heading, String stateDetails) {
+
         try {
             JSONObject obj = new JSONObject();
             obj.put("battPercentage", battPercentage);
@@ -222,7 +223,7 @@ public class MqttHelper {
 
             //
             if (stateDetails.equalsIgnoreCase("Error"))
-                App.robotStateDetails = "Idle"; // switches back to idle if error is reported
+                App.setRobotStateDetails("Idle"); // switches back to idle if error is reported
         } catch (MqttException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -273,30 +274,31 @@ public class MqttHelper {
     }
 
     public void publishRbNotification(String Description, String imagePath, String mapVerID, int nHuman, String confidence) {
-//        try {
-//            JSONObject obj = new JSONObject();
-//            obj.put("ID", UUID.randomUUID().toString()); //changed to java.utils.UUID
-//            obj.put("type","picture");
-//            obj.put("description","Human Detected");
-//            obj.put("severity", "critical");
-//            obj.put("status","opened");
-//            obj.put("mapVerID", mapVerID);
-//            obj.put("positionX", app.displayPosition[0]);
-//            obj.put("positionY", app.displayPosition[1]);
-//            obj.put("heading", app.displayPosition[2]);
-//            obj.put("details", "Number of Human: " + String.valueOf(nHuman) + "," + confidence);
-//            String s = "/sftp/NCS/";
-//            obj.put("imagePath", s +imagePath);
-//            obj.put("videoPath", "");
-//            MqttMessage message = new MqttMessage();
-//            message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
-//            // TODO: add runOnUIthread here
-//            client.publish(publishRobotNotificationTopic, message);
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("ID", UUID.randomUUID().toString()); //changed to java.utils.UUID
+            obj.put("type","picture");
+            obj.put("description","Human Detected");
+            obj.put("severity", "critical");
+            obj.put("status","opened");
+            /*Temi only have Point destination name*/
+            obj.put("mapVerID", mapVerID);
+            obj.put("positionX", app.getDisplayPosition(0));
+            obj.put("positionY", app.getDisplayPosition(1));
+            obj.put("heading", app.getDisplayPosition(2));
+            obj.put("details", "Number of Human: " + String.valueOf(nHuman) + "," + confidence);
+            String s = "/sftp/NCS/";
+            obj.put("imagePath", s +imagePath);
+            obj.put("videoPath", "");
+            MqttMessage message = new MqttMessage();
+            message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
+            // TODO: add runOnUIthread here
+            client.publish(publishRobotNotificationTopic, message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -307,48 +309,51 @@ public class MqttHelper {
      * @param requestRFM
      * @param priority
      * @param task
+     *
+     * RobotTask is now an interface, the argument should now be publishRobotTaskRequest(true, true, "", new CruzrAdapter(new CruzrTasks))
      */
     public void publishRobotTaskRequest(boolean abort, boolean requestRFM, String priority, RobotTask task) {
-//        try{
-//            JSONObject obj = new JSONObject();
-//            obj.put("requestID","");
-//            obj.put("modificationType", "CREATE");
-//            obj.put("abort",abort);
-//            obj.put("requestRfm", requestRFM);
-//            obj.put("priority",priority);
-//            JSONArray tasks = new JSONArray();
-//
-//            JSONObject jsonTask = new JSONObject();
-//            jsonTask.put("taskType",task.getTaskType());
-//            JSONObject point = new JSONObject();
-//            point.put("mapVerID",task.getMapVerId());
-//            point.put("positionName", task.getPositionName());
-//            point.put("x",task.getX());
-//            point.put("y",task.getY());
-//            point.put("heading",task.getHeading());
-//            jsonTask.put("point",point);
-//            switch (task.getTaskType())
-//            {
-//                case "GOTO":
-//                    JSONObject parameters = new JSONObject();
-//                    parameters.put("tts", task.getTts());
-//                    jsonTask.put("parameters",parameters);
-//                    break;
-//                default:
-//                    break;
-//            }
-//            tasks.put(jsonTask);
-//            obj.put("tasks",tasks);
-//            MqttMessage message = new MqttMessage();
-//            message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
-//            client.publish(publishTaskRequestTopic, message);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        } catch (MqttPersistenceException e) {
-//            e.printStackTrace();
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        }
-//    }
+        try{
+            JSONObject obj = new JSONObject();
+            obj.put("requestID","");
+            obj.put("modificationType", "CREATE");
+            obj.put("abort",abort);
+            obj.put("requestRfm", requestRFM);
+            obj.put("priority",priority);
+            JSONArray tasks = new JSONArray();
+
+            JSONObject jsonTask = new JSONObject();
+            jsonTask.put("taskType",task.getTaskType());
+            JSONObject point = new JSONObject();
+            point.put("mapVerID",task.getMapVerId());
+            point.put("positionName", task.getPositionName());
+            point.put("x",task.getX());
+            point.put("y",task.getY());
+            point.put("heading",task.getHeading());
+            jsonTask.put("point",point);
+            switch (task.getTaskType())
+            {
+                case "GOTO":
+                    JSONObject parameters = new JSONObject();
+                    parameters.put("tts", task.getTts());
+                    jsonTask.put("parameters",parameters);
+                    break;
+                default:
+                    break;
+            }
+            tasks.put(jsonTask);
+            obj.put("tasks",tasks);
+            MqttMessage message = new MqttMessage();
+            message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
+            client.publish(publishTaskRequestTopic, message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        catch (MqttPersistenceException e) {
+            e.printStackTrace();
+        }
+        catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }
