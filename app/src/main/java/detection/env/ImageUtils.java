@@ -19,7 +19,6 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Environment;
 
-import com.ncs.rtspstream.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;

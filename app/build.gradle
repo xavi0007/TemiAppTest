@@ -43,4 +43,7 @@ dependencies {
     // Tensorflow Lite
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
     implementation 'com.google.code.gson:gson:2.8.2'
+
+    //For SFTP
+    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.54'
 }

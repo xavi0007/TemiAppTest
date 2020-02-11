@@ -34,7 +34,6 @@ import android.media.MediaMuxer;
 import android.os.Environment;
 import android.util.Log;
 
-import com.ncs.rtspstream.MainActivity;
 
 /**
  * An InputStream that uses data from a MediaCodec.

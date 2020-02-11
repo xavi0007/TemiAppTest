@@ -5,7 +5,8 @@ import android.graphics.Matrix;
 import android.os.Environment;
 import android.util.Log;
 
-import com.ncs.rtspstream.MainActivity;
+
+import com.example.axus.temiapptest.Camera.CameraActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -209,8 +210,9 @@ public class ImageUtils {
 	}
 
 	public static void saveBitmapForVideo(final Bitmap bitmap) {
-
-		String file = Environment.getExternalStorageDirectory().toString() + "/ImgSave/" + String.format("%06d",(++MainActivity.imageVideoNumber)) + ".jpg";
+		CameraActivity cameraActivity = CameraActivity.getInstance();
+		int videoNumber = cameraActivity.getImageVideoNumber();
+		String file = Environment.getExternalStorageDirectory().toString() + "/ImgSave/" + String.format("%06d",(++videoNumber + ".jpg"));
 		try {
 			final FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);

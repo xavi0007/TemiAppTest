@@ -32,7 +32,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ncs.rtspstream.R;
+import com.example.axus.temiapptest.R;
 
 import java.io.IOException;
 import java.util.List;

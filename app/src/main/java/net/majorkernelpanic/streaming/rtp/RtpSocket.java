@@ -32,10 +32,10 @@ import net.majorkernelpanic.streaming.rtcp.SenderReport;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.ncs.rtspstream.App;
-import com.ncs.rtspstream.MainActivity;
+import com.example.axus.temiapptest.Camera.CameraActivity;
+import com.example.axus.temiapptest.MainActivity;
+import com.example.axus.temiapptest.RobotInit.App;
 
-import static com.ncs.rtspstream.App.app;
 
 /**
  * A basic implementation of an RTP socket.
@@ -318,15 +318,16 @@ public class RtpSocket implements Runnable {
 			// added socket exception to conteract network unreacheable, starts VA
 			e2.printStackTrace();
 			Log.i(TAG, "Handling internet broke");
-			MainActivity.mCamera.stopPreview();
-			MainActivity.mCamera.setPreviewCallback(null);
-			MainActivity.handler.postDelayed(new Runnable() {
+			final CameraActivity cameraActivity = (CameraActivity) CameraActivity.getInstance();
+			cameraActivity.stopCameraPreview();
+			cameraActivity.getmCamera().setPreviewCallback(null);
+			cameraActivity.handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						MainActivity.mCamera.setPreviewDisplay(SessionBuilder.getInstance().getSurfaceView().getHolder());
-						MainActivity.mCamera.setPreviewCallback(App.app.callback);
-						MainActivity.mCamera.startPreview();
+						cameraActivity.getmCamera().setPreviewDisplay(SessionBuilder.getInstance().getSurfaceView().getHolder());
+						cameraActivity.getmCamera().setPreviewCallback(cameraActivity.callback);
+						cameraActivity.getmCamera().startPreview();
 					}catch (Exception e){
 						e.printStackTrace();
 					}

@@ -32,8 +32,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Size;
 
-import com.ncs.rtspstream.App;
-import com.ncs.rtspstream.MainActivity;
+
+import com.example.axus.temiapptest.Camera.CameraActivity;
 
 import net.majorkernelpanic.streaming.Session;
 import net.majorkernelpanic.streaming.SessionBuilder;
@@ -65,11 +65,9 @@ import java.util.regex.Pattern;
 import detection.tflite.Classifier;
 import detection.tflite.TFLiteObjectDetectionAPIModel;
 
-import static com.ncs.rtspstream.App.app;
-import static com.ncs.rtspstream.App.callback;
-import static com.ncs.rtspstream.MainActivity.executorService;
-import static com.ncs.rtspstream.MainActivity.handler;
-import static com.ncs.rtspstream.MainActivity.mCamera;
+import static com.example.axus.temiapptest.Camera.CameraActivity.handler;
+import static net.majorkernelpanic.streaming.video.VideoStream.executorService;
+
 
 /**
  * Implementation of a subset of the RTSP protocol (RFC 2326).
@@ -217,8 +215,8 @@ public class RtspServer extends Service {
                         session.stop();
                     }
                 }
-                mCamera.setPreviewCallback(null);
-                mCamera.setPreviewCallback(callback);
+                CameraActivity.getInstance().getmCamera().setPreviewCallback(null);
+                CameraActivity.getInstance().getmCamera().setPreviewCallback(CameraActivity.callback);
             } catch (Exception e) {
             } finally {
                 mListenerThread = null;
@@ -448,7 +446,7 @@ public class RtspServer extends Service {
 			mMediaRecorder.prepare();
 			mMediaRecorder.start();
 			*/
-            while (!Thread.interrupted() && mCamera != null) {
+            while (!Thread.interrupted() && CameraActivity.getInstance().getmCamera() != null) {
 
                 request = null;
                 response = null;
@@ -525,9 +523,9 @@ public class RtspServer extends Service {
 
                     try {
                         // before handling the request, let's reset the camera preview and callbacks
-                        if (MainActivity.mCamera != null) {
-                            MainActivity.mCamera.stopPreview();
-                            MainActivity.mCamera.setPreviewCallback(null);
+                        if (CameraActivity.getInstance().getmCamera() != null) {
+                            CameraActivity.getInstance().getmCamera().stopPreview();
+                            CameraActivity.getInstance().getmCamera().setPreviewCallback(null);
                             executorService.shutdown();
                             executorService = Executors.newSingleThreadExecutor();
                         }
@@ -674,17 +672,17 @@ public class RtspServer extends Service {
                         public void run() {
 
 //							sendBroadcast(new Intent("RTSP TEARDOWN"));
-                            if (MainActivity.mCamera == null)
-                                MainActivity.mCamera = Camera.open(0);
+                            if (CameraActivity.getInstance().getmCamera() == null)
+                                CameraActivity.getCameraInstance();
                             try {
                                 executorService.shutdownNow();
                                 while (!executorService.isShutdown());
                                 executorService = Executors.newSingleThreadExecutor();
-                                MainActivity.mCamera.stopPreview();
-                                MainActivity.mCamera.setPreviewCallback(null);
-                                MainActivity.mCamera.setPreviewDisplay(SessionBuilder.getInstance().getSurfaceView().getHolder());
-                                MainActivity.mCamera.setPreviewCallback(App.app.callback);
-                                MainActivity.mCamera.startPreview();
+                                CameraActivity.getInstance().getmCamera().stopPreview();
+                                CameraActivity.getInstance().getmCamera().setPreviewCallback(null);
+                                CameraActivity.getInstance().getmCamera().setPreviewDisplay(SessionBuilder.getInstance().getSurfaceView().getHolder());
+                                CameraActivity.getInstance().getmCamera().setPreviewCallback(CameraActivity.callback);
+                                CameraActivity.getInstance().getmCamera().startPreview();
                             }catch (Exception e){
                                 e.printStackTrace();
                             }

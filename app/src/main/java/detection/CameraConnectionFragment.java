@@ -53,7 +53,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ncs.rtspstream.R;
+import com.example.axus.temiapptest.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

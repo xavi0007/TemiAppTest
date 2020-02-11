@@ -51,6 +51,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 
 
+import com.example.axus.temiapptest.Camera.CameraActivity;
+import com.example.axus.temiapptest.MainActivity;
+import com.example.axus.temiapptest.RobotInit.App;
+
 import net.majorkernelpanic.streaming.MediaStream;
 import net.majorkernelpanic.streaming.Session;
 import net.majorkernelpanic.streaming.SessionBuilder;
@@ -88,15 +92,7 @@ import detection.customview.OverlayView;
 import detection.tflite.Classifier;
 import detection.tflite.TFLiteObjectDetectionAPIModel;
 
-import static com.ncs.rtspstream.App.app;
-import static com.ncs.rtspstream.MainActivity.currentDisplayDetails;
-import static com.ncs.rtspstream.MainActivity.detectionYesNo;
-import static com.ncs.rtspstream.MainActivity.displayPositionDetails;
-import static com.ncs.rtspstream.MainActivity.distanceBtwPtsDetails;
-import static com.ncs.rtspstream.MainActivity.executorService;
-import static com.ncs.rtspstream.MainActivity.imageUploadFromTensorflow;
-import static com.ncs.rtspstream.MainActivity.logInState;
-import static com.ncs.rtspstream.MainActivity.sosButton;
+import static com.example.axus.temiapptest.Camera.CameraActivity.cameraRelease;
 
 
 /**
@@ -368,7 +364,7 @@ public abstract class VideoStream extends MediaStream {
 	 */
 	public synchronized void stop() {
 		if (mCamera != null) {
-			if (mMode == MODE_MEDIACODEC_API && !MainActivity.cameraRelease) {
+			if (mMode == MODE_MEDIACODEC_API && !cameraRelease) {
 				mCamera.setPreviewCallbackWithBuffer(null);
 			}
 			if (mMode == MODE_MEDIACODEC_API_2) {
@@ -683,7 +679,7 @@ public abstract class VideoStream extends MediaStream {
 			ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
 
 			@Override
-			synchronized public void onPreviewFrame(final byte[] data, Camera camera) {
+			synchronized public void onPreviewFrame(final byte[] data, final Camera camera) {
 //				if (future.isDone()) {
 //					future = MainActivity.executorService.submit(new Runnable() {
 //						@Override
@@ -704,7 +700,7 @@ public abstract class VideoStream extends MediaStream {
 //                if (mCamera != null && realCamera != null) {
                     oldnow = now;
                     now = System.nanoTime() / 1000;
-                    byte[] newByteArrayForDetection = data.clone();
+                    final byte[] newByteArrayForDetection = data.clone();
 /*				if (i++>3) {
 					i = 0;
 					//Log.d(TAG,"Mea	sured: "+1000000L/(now-oldnow)+" fps.");
@@ -713,8 +709,10 @@ public abstract class VideoStream extends MediaStream {
                         future = executorService.submit(new Runnable() {
                             @Override
                             public void run() {
-                                App.app.updateRgbBytes(newByteArrayForDetection, camera);
-                                App.app.sendAlertAlgo();
+                                CameraActivity activity = (CameraActivity) CameraActivity.getInstance();
+                                activity.updateRgbBytes(newByteArrayForDetection, camera);
+								App app = App.getInstance();
+                                app.sendAlertAlgo();
                             }
                         });
                     }
@@ -726,7 +724,7 @@ public abstract class VideoStream extends MediaStream {
                             e.printStackTrace();
                         }
 
-                        if (MainActivity.cameraRelease == true) {
+                        if (cameraRelease == true) {
                             Log.i(TAG, "Camera has been released!");
                             return;
                         }
@@ -1268,7 +1266,7 @@ public abstract class VideoStream extends MediaStream {
 
 	protected synchronized void destroyCamera() {
 		//MainActivity.surfaceVisibility = false;
-		if (mCamera != null && !MainActivity.cameraRelease) {
+		if (mCamera != null && cameraRelease) {
 			if (mStreaming) super.stop();
 			lockCamera();
 			mCamera.addCallbackBuffer(null);
@@ -1388,5 +1386,5 @@ public abstract class VideoStream extends MediaStream {
 		mCamera.setPreviewCallbackWithBuffer(null);
 
 	}
-
+	public static ExecutorService executorService = Executors.newSingleThreadExecutor();
 }

@@ -29,7 +29,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.axus.temiapptest.Camera.CameraActivity;
+import com.example.axus.temiapptest.RobotInit.App;
 import com.example.axus.temiapptest.UIAdapter.CustomAdapter;
+import com.robotemi.sdk.BatteryData;
 import com.robotemi.sdk.MediaObject;
 import com.robotemi.sdk.NlpResult;
 import com.robotemi.sdk.Robot;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //variable declaration
     private Robot robot;
     List<String> locations;
+    private static volatile AppCompatActivity mainActivity;
 
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide(); // hide the title bar
         init();
+        this.mainActivity = mainActivity;
     }
 
     public void init() {
@@ -192,6 +196,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
     }
 
+    public void goToDestination(String destination){
+        for(String location : robot.getLocations()){
+            if(location.equals(destination.toLowerCase().trim())){
+                robot.goTo(destination.toLowerCase().trim());
+            }
+        }
+    }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -280,6 +292,22 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         long end = t + 1000;
         while (System.currentTimeMillis() < end) {
             robot.skidJoy(1F, 0F);
+        }
+    }
+
+    public void speak(String text) {
+        TtsRequest ttsRequest = TtsRequest.create(text, true);
+        robot.speak(ttsRequest);
+    }
+
+    public void getBatteryData(View view) {
+        BatteryData batteryData = robot.getBatteryData();
+        if (batteryData.isCharging()) {
+            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and charging.", true);
+            robot.speak(ttsRequest);
+        } else {
+            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and not charging.", true);
+            robot.speak(ttsRequest);
         }
     }
 
@@ -467,5 +495,27 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.showTopBar();
     }
 
+    public void stopMovement(){
+        robot.stopMovement();
+    }
+
+    public Robot getRobot() {
+        return robot;
+    }
+
+    public void setRobot(Robot robot) {
+        this.robot = robot;
+    }
+
+    public static AppCompatActivity getInstance() {
+        if (mainActivity == null) {
+            synchronized (MainActivity.class) {
+                if (mainActivity == null) {
+                    mainActivity = new MainActivity();
+                }
+            }
+        }
+        return mainActivity;
+    }
 
 }
