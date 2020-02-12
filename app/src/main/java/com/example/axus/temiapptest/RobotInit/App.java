@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.axus.temiapptest.Camera.CameraActivity;
 import com.example.axus.temiapptest.MainActivity;
 import com.example.axus.temiapptest.Tasks.RobotTask;
+import com.robotemi.sdk.BatteryData;
 
 import net.majorkernelpanic.streaming.SessionBuilder;
 import net.majorkernelpanic.streaming.rtsp.RtspServer;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import detection.BitmapHandler;
 import detection.MediaFileHandler;
@@ -38,14 +38,18 @@ public class App extends Application {
     private static final String TAG = "AudioConfig";
     private static volatile App app;
 
-    private RobotTask robotTask;
-    private MainActivity mActivity = (MainActivity) MainActivity.getInstance();
+    //Classes
+    private MainActivity mActivity = MainActivity.getInstance();
+
     private static String robotStateDetails;
+    public static String stateDetails = "Initialization";
+
     private int[] displayPosition;
-    private File playFile;
+
 
     // mediafilehandler for SFTP audio broadcast
     private MediaFileHandler mMediaFileHandler;
+    private File playFile;
 
     //MQTT and RTSP
     private MqttHelper mqttHelper;
@@ -67,27 +71,52 @@ public class App extends Application {
 
     //Location
     public Point currentDetectPoint = null;
-
     public static boolean logInState = false;
+    final public String HomeBase = "home base";
 
     //Task
     private int totalTaskNo =0;
     private int currentTaskNo=0;
+    public boolean cancelTask = false;
+    public boolean taskFromRobot = false;
+    private RobotTask robotTask; //This is empty, going to be a problem
+
+    //Handler
+    Handler mHandler = new Handler();
+    private static final int interval = 1000; // Every 1 second
 
     //Constructor for the class
     private App() {
-        MqttHelper mqttHelper = new MqttHelper(getApplicationContext());
+    }
+
+    public void onCreate(){
+        super.onCreate();
+        MqttHelper mqttHelper = new MqttHelper(MainActivity.getInstance().getBaseContext());
         Handler checkRTSPlooper = new Handler();
-
+        startMqtt();
+        if(mqttHelper.isMqttConnected()){
+            startPublishing();
+        }else{
+            Log.d("OnCreate", "MQTT not connected");
+        }
     }
 
 
-    /**
-     * MQTT*/
-    public void goToDockStation(){
-        MainActivity mActivity = (MainActivity) MainActivity.getInstance();
-        mActivity.goToDestination("home base");
+    void startPublishing() {
+        mHandlerTask.run();
     }
+    Runnable mHandlerTask = new Runnable() {
+
+        int i = 0;
+
+        @Override
+        public void run() {
+            i++;
+            publishToTopic();
+            mHandler.postDelayed(mHandlerTask, interval);
+        }
+    };
+
 
     //TEMI no need to localize
 //    public void goToLocalize(){
@@ -106,10 +135,7 @@ public class App extends Application {
 //
 //    }
 
-    public void stopMovement(){
-        MainActivity mActivity = (MainActivity) MainActivity.getInstance();
-        mActivity.stopMovement();
-    }
+
 
     public void startMqtt() {
         mqttHelper = new MqttHelper(getApplicationContext());
@@ -155,26 +181,52 @@ public class App extends Application {
 
     public void publishToTopic() {
 //        mapModel = queryMapModelByMapName(RosRobotApi.get().getCurrentMap());
-//        BatteryInfo batteryInfo = RosRobotApi.get().getBattery();
+        BatteryData batteryInfo = MainActivity.getInstance().getBatteryData();
+        Double batteryLevel = Double.parseDouble(String.valueOf(batteryInfo.getBatteryPercentage()));
 //        Position currentPosition = RosRobotApi.get().getPosition(true);
 //        if (null == mapModel || null == currentPosition) {
 //            return;
 //        }
-//        String mapVersionId = mapPointHelper.getMapVersionIdFromMapName(RosRobotApi.get().getCurrentMap());
-//        System.out.println("Xpos: " + currentPosition.x + "Ypos: " + currentPosition.y + "Heading: " + currentPosition.theta);
-//        displayPosition = convertMapPositionToDisplayPosition(mapModel, currentPosition);
-//        Log.d(TAG, "MAIN Battery Info is " + batteryInfo.battery);
-//        Log.d(TAG,"MAIN MapVerID is " + mapVersionId);
-//        Log.d(TAG, "MAIN Position X is " + displayPosition[0]);
-//        Log.d(TAG, "MAIN Position Y is " + displayPosition[1]);
-//        Log.d(TAG, "MAIN Position Heading is " + displayPosition[2]);
-//        Log.i(TAG, "stateDetail is " + stateDetails);
-////        mqttHelper.publishRobotStatus(batteryInfo.battery, robotTask.getMapVerId(), displayPosition[0], displayPosition[1], displayPosition[2]);
-//        mqttHelper.publishRobotStatus(batteryInfo.battery, mapVersionId, displayPosition[0], displayPosition[1], displayPosition[2], stateDetails);
-//
-//        //adding distance checking here as a POC for speed of algo comparison
-////        VideoStream.exceedRange = distance(currentDetectPoint, new Point(displayPosition[0],displayPosition[1]));
+        String mapVersionId = "MapV1";
+        displayPosition = convertMapPositionToDisplayPosition();
+        Log.d(TAG, "MAIN Battery Info is " + batteryInfo.toString());
+        Log.d(TAG,"MAIN MapVerID is " + mapVersionId);
+        Log.d(TAG, "MAIN Position X is " + displayPosition[0]);
+        Log.d(TAG, "MAIN Position Y is " + displayPosition[1]);
+        Log.d(TAG, "MAIN Position Heading is " + displayPosition[2]);
+        Log.i(TAG, "stateDetail is " + stateDetails);
+//        mqttHelper.publishRobotStatus(batteryInfo.battery, robotTask.getMapVerId(), displayPosition[0], displayPosition[1], displayPosition[2]);
+        mqttHelper.publishRobotStatus(batteryLevel, mapVersionId, displayPosition[0], displayPosition[1], displayPosition[2], stateDetails);
+
+        //adding distance checking here as a POC for speed of algo comparison
+//        VideoStream.exceedRange = distance(currentDetectPoint, new Point(displayPosition[0],displayPosition[1]));
     }
+
+    public int[] convertMapPositionToDisplayPosition(){
+        return new int[]{1,1,0};
+
+    }
+    // For Ubtech
+//    public int[] convertMapPositionToDisplayPosition(MapModel mapModel, Position position) {
+//        if (null == mapModel || null == position) {
+//            MyLogger.mLog().e("convertMapPositionToDisplayPosition mapModel or position is null! " +
+//                    "Return null!");
+//
+//            return null;
+//        }
+//
+//        System.out.println("Current Pos Coordinate x: " + position.x + " y: " + position.y);
+//
+//        float resolution = Float.valueOf(mapModel.getResolution());
+//        float mapLeftTopX = Float.valueOf(mapModel.getBmp_x());
+//        float mapLeftTopY = Float.valueOf(mapModel.getBmp_y());
+//
+//        int x = (int) (-mapLeftTopX + position.x / resolution);
+//        int y = (int) (mapLeftTopY - position.y / resolution);
+//        int theta = (int) (180 * position.theta / Math.PI);
+//
+//        return new int[]{x, y, theta};
+//    }
 
     private void getNotificationTask(MqttMessage mqttMessage) throws JSONException {
         JSONObject reader = new JSONObject(mqttMessage.toString());
@@ -185,10 +237,11 @@ public class App extends Application {
         if (status.equals("Acknowledged")) {
             app.waitForAcknowledgement = false;
             Log.i(TAG, "Acknowledged point");
+            //gonna hve a null point error here
             if (robotTask.getTaskType().equals("GOTO_CHARGING")){
                 mActivity.speak("I'm going back to charge");
                 goTocharge = true;
-                goToDockStation();
+                MainActivity.getInstance().goToDestination(HomeBase);
             }
 //            else if (robotTask.getPositionName()!=null || !robotTask.getPositionName().equals("Dockseven")) {
 //                NavigationApi.get().startNavigationService(robotTask.getPositionName());
@@ -237,10 +290,95 @@ public class App extends Application {
 //
     }
 
-
     /* Algorithms */
+    public void robotTaskExecuteAlgo(final RobotTask robotTask, final JSONObject reader) throws JSONException {
+
+        switch (robotTask.getTaskType()) {
+            case "GOTO":
+                if (robotTask.getModificationType().equals("CANCEL")) {
+                    cancelTask = true;
+                    MainActivity.getInstance().stopMovement();
+                    taskFromRobot = false;
+//                    robotWorkStatus = 0;
+                }else{
+                    MainActivity.getInstance().goToDestination(robotTask.getPositionName());
+                }
+
+                break;
+            case "LOCALIZE":
+                Log.d("RobotTaskExecuteAlgo", "No localize for this robot");
+                break;
+            case "GOTO_BROADCAST":
+                // play audio and get sftp client here (audio handler)
+                // also copy GOTO
+
+
+                //-------------------------------play audio configs---------------------------------
+                JSONObject parameters = robotTask.getParameters();
+
+//                String audioFilePath = new JSONArray(parameters.getString("medias")).getJSONObject(0).getString("path");
+//                String audioFilePath = parameters.getJSONArray("medias").getJSONObject(0).getString("path");
+                String data = parameters.getString("medias");
+                JSONArray medias = new JSONArray(data);
+                String audioFilePath = medias.getJSONObject(0).getString("path");
+                Log.i("New protocol", audioFilePath);
+
+                playFile = new File(audioFilePath);
+
+                Log.i(TAG, "File to be played is " + playFile.getName() + ", Full Path is: " + playFile.getAbsolutePath());
+
+                Log.i(TAG, parameters.getString("bcastBeforeGOTO") + " , " + parameters.getString("bcastInBtw") + " , "  + parameters.getString("loopInBtw") + " , " + parameters.getString("bcastEndGOTO"));
+
+                if (parameters.getString("bcastBeforeGOTO").equals("false") && parameters.getString("bcastInBtw").equals("false") && parameters.getString("loopInBtw").equals("false")){
+                    //endGOTO = false;
+                    mMediaFileHandler.stop();
+                }
+                // ------------------------------end audio configs----------------------------------
+                //Then carry on moving
+                if (robotTask.getModificationType().equals("CANCEL")) {
+                    cancelTask = true;
+                    MainActivity.getInstance().stopMovement();
+                    taskFromRobot = false;
+//                    robotWorkStatus = 0;
+                }else{
+                    MainActivity.getInstance().goToDestination(robotTask.getPositionName());
+                }
+                break;
+            case "GOTO_CHARGING":
+                /*go back home base*/
+                MainActivity.getInstance().goToDestination(HomeBase);
+                break;
+            case "SURVEILLANCE_MODE":
+                // need to set robot working status to not busy!
+                if (robotTask.getModificationType().equals("CREATE"))
+                {
+                    mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "EXECUTING", "");
+                    if(robotTask.getParameters().getString("rtsp").equals("true")){ // completed is sent within the waitRtspRun/stop
+                        if (isMyServiceRunning(RtspServer.class)){
+                            System.out.println("RTSP server already running!");
+                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already running!");
+                            break;
+                        }
+                        startService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
+                        checkRTSPlooper.postDelayed(waitRtspRun, 500);
+
+                    }else if (robotTask.getParameters().getString("rtsp").equals("false")){
+                        if (!isMyServiceRunning(RtspServer.class)){ // if already not runnning then fail the task
+                            System.out.println("RTSP server already stopped!");
+                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already stopped!");
+                            break;
+                        }
+                        stopService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
+                        checkRTSPlooper.postDelayed(waitRtspStop, 500);
+                    }
+                }
+            default:
+                break;
+        }
+    }
+
     public void sendAlertAlgo() {
-        CameraActivity activity = (CameraActivity) CameraActivity.getInstance();
+        CameraActivity activity = CameraActivity.getInstance();
         // Stop button
 //        if(sosButton){
 //            Log.i("OK12", "SOS button initiated");
@@ -260,8 +398,8 @@ public class App extends Application {
                 detected = activity.runDetection();
                 if (detected) {
                     // store point
-                    app.currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
-                    App.app.sendNotification(activity.getCropCopyBitmap());
+                    currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
+                    sendNotification(activity.getCropCopyBitmap());
                     exceedRange = false;
 //                    fileToVideo();
                 }
@@ -271,8 +409,8 @@ public class App extends Application {
                 if (exceedRange) {
                     detected = activity.runDetection();
                     if (detected) {
-                        app.currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
-                        App.app.sendNotification(activity.getCropCopyBitmap());
+                        currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
+                        sendNotification(activity.getCropCopyBitmap());
                         exceedRange = false;
 //                        fileToVideo();
                     }
@@ -281,8 +419,8 @@ public class App extends Application {
                 detected = activity.runDetection();
                 if (detected) {
                     // store point
-                    app.currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
-                    App.app.sendNotification(activity.getCropCopyBitmap());
+                    currentDetectPoint = new Point(app.displayPosition[0], app.displayPosition[1], app.displayPosition[2]);
+                    sendNotification(activity.getCropCopyBitmap());
                     exceedRange = false;
 //                    fileToVideo();
                 }
@@ -309,6 +447,7 @@ public class App extends Application {
             }
         });
     }
+
 
     public void sendNotification(Bitmap notificationImage) {
         ((Activity)SessionBuilder.getInstance().getContext()).runOnUiThread(new Runnable() {
@@ -348,7 +487,7 @@ public class App extends Application {
             if (mqttHelper.isMqttConnected()) {
                 Log.i(TAG, "detected something");
 //				mqttHelper.publishRbNotification("Human Detected", bitmapHandler.getFilename(), "5c899c07-7b0a-4f1c-810e-f4bb419e1547");
-                CameraActivity cActivity = (CameraActivity) CameraActivity.getInstance();
+                CameraActivity cActivity =  CameraActivity.getInstance();
                 mqttHelper.publishRbNotification("Human Detected", bitmapHandler.getFilename(), "0e1055fb-c89c-4086-b92f-abfcd20233c5", cActivity.getNhuman(), cActivity.getConfidence());
 //                if (app.goTocharge == false) {
 //                    app.stopMovement();
@@ -369,75 +508,6 @@ public class App extends Application {
 
     }
 
-
-
-    public void robotTaskExecuteAlgo(final RobotTask robotTask, final JSONObject reader) throws JSONException {
-
-        switch (robotTask.getTaskType()) {
-            case "GOTO":
-                break;
-            case "LOCALIZE":
-                break;
-            case "GOTO_BROADCAST":
-                // play audio and get sftp client here (audio handler)
-                // also copy GOTO
-
-
-                //-------------------------------play audio configs---------------------------------
-                JSONObject parameters = robotTask.getParameters();
-
-//                String audioFilePath = new JSONArray(parameters.getString("medias")).getJSONObject(0).getString("path");
-//                String audioFilePath = parameters.getJSONArray("medias").getJSONObject(0).getString("path");
-                String data = parameters.getString("medias");
-                JSONArray medias = new JSONArray(data);
-                String audioFilePath = medias.getJSONObject(0).getString("path");
-                Log.i("New protocol", audioFilePath);
-
-                playFile = new File(audioFilePath);
-
-                Log.i(TAG, "File to be played is " + playFile.getName() + ", Full Path is: " + playFile.getAbsolutePath());
-
-                Log.i(TAG, parameters.getString("bcastBeforeGOTO") + " , " + parameters.getString("bcastInBtw") + " , "  + parameters.getString("loopInBtw") + " , " + parameters.getString("bcastEndGOTO"));
-
-                if (parameters.getString("bcastBeforeGOTO").equals("false") && parameters.getString("bcastInBtw").equals("false") && parameters.getString("loopInBtw").equals("false")){
-                    //endGOTO = false;
-                    mMediaFileHandler.stop();
-                }
-                // ------------------------------end audio configs----------------------------------
-
-                break;
-            case "GOTO_CHARGING":
-               /*go back home base*/
-
-                break;
-            case "SURVEILLANCE_MODE":
-                // need to set robot working status to not busy!
-                if (robotTask.getModificationType().equals("CREATE"))
-                {
-                    mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "EXECUTING", "");
-                    if(robotTask.getParameters().getString("rtsp").equals("true")){ // completed is sent within the waitRtspRun/stop
-                        if (isMyServiceRunning(RtspServer.class)){
-                            System.out.println("RTSP server already running!");
-                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already running!");
-                            break;
-                        }
-                        startService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
-                        checkRTSPlooper.postDelayed(waitRtspRun, 500);
-
-                    }else if (robotTask.getParameters().getString("rtsp").equals("false")){
-                        if (!isMyServiceRunning(RtspServer.class)){ // if already not runnning then fail the task
-                            System.out.println("RTSP server already stopped!");
-                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already stopped!");
-                            break;
-                        }
-                        stopService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
-                        checkRTSPlooper.postDelayed(waitRtspStop, 500);
-                    }
-                }
-            default:
-                break;
-        }
-    }
 
     // Check if a service is running
     public boolean isMyServiceRunning(Class<?> serviceClass) {

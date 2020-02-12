@@ -1,7 +1,6 @@
 package com.example.axus.temiapptest.Camera;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -52,7 +52,6 @@ import android.view.SurfaceHolder.Callback;
 
 
 import com.example.axus.temiapptest.Camera.CameraActivity;
-import com.example.axus.temiapptest.MainActivity;
 import com.example.axus.temiapptest.RobotInit.App;
 
 import net.majorkernelpanic.streaming.MediaStream;
@@ -709,7 +708,7 @@ public abstract class VideoStream extends MediaStream {
                         future = executorService.submit(new Runnable() {
                             @Override
                             public void run() {
-                                CameraActivity activity = (CameraActivity) CameraActivity.getInstance();
+                                CameraActivity activity = CameraActivity.getInstance();
                                 activity.updateRgbBytes(newByteArrayForDetection, camera);
 								App app = App.getInstance();
                                 app.sendAlertAlgo();

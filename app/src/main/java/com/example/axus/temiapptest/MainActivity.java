@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //variable declaration
     private Robot robot;
     List<String> locations;
-    private static volatile AppCompatActivity mainActivity;
+    private static volatile MainActivity mainActivity;
 
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
@@ -71,13 +71,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide(); // hide the title bar
         init();
-        this.mainActivity = mainActivity;
+
     }
 
     public void init() {
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         btnSaveLocation.setVisibility(View.GONE);
         btnSavedLocations.setVisibility(View.GONE);
         setLocationSpinner();
+        App.getInstance();
     }
 
     //hardware permissions
@@ -201,6 +203,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
             if(location.equals(destination.toLowerCase().trim())){
                 robot.goTo(destination.toLowerCase().trim());
             }
+            else{
+                Log.d("goToDestionation","fail to find location");
+            }
         }
     }
 
@@ -300,15 +305,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.speak(ttsRequest);
     }
 
-    public void getBatteryData(View view) {
+    public BatteryData getBatteryData() {
         BatteryData batteryData = robot.getBatteryData();
-        if (batteryData.isCharging()) {
-            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and charging.", true);
-            robot.speak(ttsRequest);
-        } else {
-            TtsRequest ttsRequest = TtsRequest.create(batteryData.getBatteryPercentage() + " percent battery and not charging.", true);
-            robot.speak(ttsRequest);
-        }
+        return batteryData;
     }
 
 
@@ -507,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         this.robot = robot;
     }
 
-    public static AppCompatActivity getInstance() {
+    public static MainActivity getInstance() {
         if (mainActivity == null) {
             synchronized (MainActivity.class) {
                 if (mainActivity == null) {

@@ -318,7 +318,7 @@ public class RtpSocket implements Runnable {
 			// added socket exception to conteract network unreacheable, starts VA
 			e2.printStackTrace();
 			Log.i(TAG, "Handling internet broke");
-			final CameraActivity cameraActivity = (CameraActivity) CameraActivity.getInstance();
+			final CameraActivity cameraActivity = CameraActivity.getInstance();
 			cameraActivity.stopCameraPreview();
 			cameraActivity.getmCamera().setPreviewCallback(null);
 			cameraActivity.handler.postDelayed(new Runnable() {
