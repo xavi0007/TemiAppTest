@@ -352,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
     }
 
+    //there should be a listener
     @Override
     public void onGoToLocationStatusChanged(@NotNull String location, @NotNull String status, int descriptionId, @NotNull String description) {
         Log.d("GoToStatusChanged", "descriptionId=" + descriptionId + ", description=" + description);
@@ -370,10 +371,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
             case "complete":
                 robot.speak(TtsRequest.create("Completed", false));
+                robot.goTo("home base");
+                robot.speak(TtsRequest.create("Going back to home base", false));
                 break;
 
             case "abort":
                 robot.speak(TtsRequest.create("Cancelled", false));
+                robot.goTo("home base");
+                robot.speak(TtsRequest.create("Going back to home base", false));
                 break;
         }
     }
