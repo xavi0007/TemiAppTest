@@ -1,4 +1,4 @@
-package com.example.axus.temiapptest.RobotInit;
+package com.example.axus.temiapptest;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.axus.temiapptest.Camera.CameraActivity;
-import com.example.axus.temiapptest.MainActivity;
 import com.example.axus.temiapptest.Tasks.RobotTask;
 import com.robotemi.sdk.BatteryData;
 
@@ -35,11 +34,12 @@ import detection.MediaFileHandler;
 import detection.MqttHelper;
 
 public class App extends Application {
+
     private static final String TAG = "AudioConfig";
     private static volatile App app;
 
     //Classes
-    private MainActivity mActivity = MainActivity.getInstance();
+    private MainActivity mActivity;
 
     private static String robotStateDetails;
     public static String stateDetails = "Initialization";
@@ -85,13 +85,16 @@ public class App extends Application {
     Handler mHandler = new Handler();
     private static final int interval = 1000; // Every 1 second
 
+    private Context context;
+
     //Constructor for the class
-    private App() {
+    public App() {
+        app = this;
     }
 
     public void onCreate(){
         super.onCreate();
-        MqttHelper mqttHelper = new MqttHelper(MainActivity.getInstance().getBaseContext());
+        MqttHelper mqttHelper = new MqttHelper(getApplicationContext());
         Handler checkRTSPlooper = new Handler();
         startMqtt();
         if(mqttHelper.isMqttConnected()){
@@ -100,7 +103,6 @@ public class App extends Application {
             Log.d("OnCreate", "MQTT not connected");
         }
     }
-
 
     void startPublishing() {
         mHandlerTask.run();
@@ -598,6 +600,7 @@ public class App extends Application {
             synchronized (App.class) {
                 if (app == null) {
                     app = new App();
+                    app.onCreate();
                 }
             }
         }

@@ -46,4 +46,8 @@ dependencies {
 
     //For SFTP
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.54'
+
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+
 }

@@ -29,8 +29,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.axus.temiapptest.Camera.CameraActivity;
-import com.example.axus.temiapptest.RobotInit.App;
 import com.example.axus.temiapptest.UIAdapter.CustomAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.robotemi.sdk.BatteryData;
 import com.robotemi.sdk.MediaObject;
 import com.robotemi.sdk.NlpResult;
@@ -62,23 +62,31 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //LinearLayout rLL = (LinearLayout) findViewById(R.id.main_layout);
     //UI
     public EditText saveLocationInput;
-    public Button btnSaveLocation, btnSavedLocations;
+    public Button btnSaveLocation;
+    public Button btnSavedLocations;
+    public Button ncsBtn;
+    public Button goTo;
+    public FloatingActionButton cameraView;
     public Spinner locationSpinner;
 
     //permision variables
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static final int REQUEST_CAMERA = 100;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    public Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         robot = Robot.getInstance(); // get an instance of the robot in order to begin using its features.
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide(); // hide the title bar
         init();
+    }
 
+    public Context getContext() {
+        return context;
     }
 
     public void init() {
@@ -88,13 +96,17 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         locationSpinner = findViewById(R.id.locationSpinner);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
         btnSavedLocations = (Button) findViewById(R.id.btnSavedLocations);
-        Button ncsBtn = (Button) findViewById(R.id.ncsbtn);
+        ncsBtn = (Button) findViewById(R.id.ncsbtn);
+        goTo = (Button) findViewById(R.id.btnGoTo);
+        cameraView = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         //Hide everything irrelevant
         saveLocationInput.setVisibility(View.GONE);
         btnSaveLocation.setVisibility(View.GONE);
         btnSavedLocations.setVisibility(View.GONE);
+        locationSpinner.setVisibility(View.GONE);
+        goTo.setVisibility(View.GONE);
+        cameraView.setVisibility(View.GONE);
         setLocationSpinner();
-        App.getInstance();
     }
 
     //hardware permissions
@@ -224,6 +236,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         saveLocationInput.setVisibility(View.VISIBLE);
         btnSaveLocation.setVisibility(View.VISIBLE);
         btnSavedLocations.setVisibility(View.VISIBLE);
+        locationSpinner.setVisibility(View.VISIBLE);
+        goTo.setVisibility(View.VISIBLE);
+        cameraView.setVisibility(View.VISIBLE);
         robot.showTopBar();
     }
 

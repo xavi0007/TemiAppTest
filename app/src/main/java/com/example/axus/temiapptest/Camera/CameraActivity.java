@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.axus.temiapptest.R;
-import com.example.axus.temiapptest.RobotInit.App;
+import com.example.axus.temiapptest.App;
 
 import net.majorkernelpanic.streaming.video.ImageUtils;
 import net.majorkernelpanic.streaming.video.Point;

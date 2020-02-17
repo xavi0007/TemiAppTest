@@ -33,8 +33,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.example.axus.temiapptest.Camera.CameraActivity;
-import com.example.axus.temiapptest.MainActivity;
-import com.example.axus.temiapptest.RobotInit.App;
 
 
 /**

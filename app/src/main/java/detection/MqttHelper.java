@@ -1,12 +1,10 @@
 package detection;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.axus.temiapptest.MainActivity;
-import com.example.axus.temiapptest.RobotInit.App;
+import com.example.axus.temiapptest.App;
 import com.example.axus.temiapptest.Tasks.RobotTask;
 
 import net.majorkernelpanic.streaming.SessionBuilder;
