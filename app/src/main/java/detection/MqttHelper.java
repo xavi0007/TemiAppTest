@@ -41,7 +41,8 @@ public class MqttHelper {
 //    public static final String serverUri = "tcp://172.18.4.44:1883";                   //SIT: Bryan's Laptop
 //    public static final String serverUri = "tcp://192.168.21.241";              // NCS: KY's Laptop
 //    public static final String serverUri = "tcp://192.168.21.36:1883";               // Robot's Adaptor
-    public static final String serverUri = "tcp://192.168.21.236:1883";               // Test ip
+//    public static final String serverUri = "tcp://192.168.21.236:1883";               // local ip
+        public static final String serverUri = "tcp://192.168.21.217:1883"; //My computer's ip
 //    public static final String serverUri = "tcp://postman.cloudmqtt.com:11516";   // CloudMQTT
 //    public static final String serverUri = "tcp://192.168.21.161:1883";                 // Bryan Laptop broker
 
@@ -58,6 +59,7 @@ public class MqttHelper {
     private String publishTaskStatusTopic = "RbTaskStatus";
     private String publishTaskRequestTopic = "RbTaskRequest";
     public String subscribeRobotNotificationTopic = "NotificationResp"; //"RtTask";
+    public String subscribeTaskTopic = "RtTask";
     public String subscribeTaskRequestStatusTopic = "RbTaskRequestStatus";
     public String subscribeFaqTopic = "test/message";
     public String subscribeConciergeProfileTopic = "test/main";
@@ -68,7 +70,6 @@ public class MqttHelper {
 //    private String publishRobotStatusTopic = "RbStatus";
 //    private String publishTaskStatusTopic = "RbTaskStatus";
 //    private String publishTaskRequestTopic = "RbTaskRequest";
-    public String subscribeTaskTopic = "RtTask";
 //    public String subscribeTaskRequestStatusTopic = "RbTaskRequestStatus";
 //    public String subscribeFaqTopic = "test/message";
 //    public String subscribeConciergeProfileTopic = "test/main";

@@ -304,6 +304,7 @@ public class App extends Application {
 //                    robotWorkStatus = 0;
                 }else{
                     MainActivity.getInstance().goToDestination(robotTask.getPositionName());
+                    Log.d("robotTaskExecuteAlgo", "moving to"+robotTask.getPositionName());
                 }
 
                 break;
@@ -316,25 +317,25 @@ public class App extends Application {
 
 
                 //-------------------------------play audio configs---------------------------------
-                JSONObject parameters = robotTask.getParameters();
-
-//                String audioFilePath = new JSONArray(parameters.getString("medias")).getJSONObject(0).getString("path");
-//                String audioFilePath = parameters.getJSONArray("medias").getJSONObject(0).getString("path");
-                String data = parameters.getString("medias");
-                JSONArray medias = new JSONArray(data);
-                String audioFilePath = medias.getJSONObject(0).getString("path");
-                Log.i("New protocol", audioFilePath);
-
-                playFile = new File(audioFilePath);
-
-                Log.i(TAG, "File to be played is " + playFile.getName() + ", Full Path is: " + playFile.getAbsolutePath());
-
-                Log.i(TAG, parameters.getString("bcastBeforeGOTO") + " , " + parameters.getString("bcastInBtw") + " , "  + parameters.getString("loopInBtw") + " , " + parameters.getString("bcastEndGOTO"));
-
-                if (parameters.getString("bcastBeforeGOTO").equals("false") && parameters.getString("bcastInBtw").equals("false") && parameters.getString("loopInBtw").equals("false")){
-                    //endGOTO = false;
-                    mMediaFileHandler.stop();
-                }
+//                JSONObject parameters = robotTask.getParameters();
+//
+////                String audioFilePath = new JSONArray(parameters.getString("medias")).getJSONObject(0).getString("path");
+////                String audioFilePath = parameters.getJSONArray("medias").getJSONObject(0).getString("path");
+//                String data = parameters.getString("medias");
+//                JSONArray medias = new JSONArray(data);
+//                String audioFilePath = medias.getJSONObject(0).getString("path");
+//                Log.i("New protocol", audioFilePath);
+//
+//                playFile = new File(audioFilePath);
+//
+//                Log.i(TAG, "File to be played is " + playFile.getName() + ", Full Path is: " + playFile.getAbsolutePath());
+//
+//                Log.i(TAG, parameters.getString("bcastBeforeGOTO") + " , " + parameters.getString("bcastInBtw") + " , "  + parameters.getString("loopInBtw") + " , " + parameters.getString("bcastEndGOTO"));
+//
+//                if (parameters.getString("bcastBeforeGOTO").equals("false") && parameters.getString("bcastInBtw").equals("false") && parameters.getString("loopInBtw").equals("false")){
+//                    //endGOTO = false;
+//                    mMediaFileHandler.stop();
+//                }
                 // ------------------------------end audio configs----------------------------------
                 //Then carry on moving
                 if (robotTask.getModificationType().equals("CANCEL")) {
