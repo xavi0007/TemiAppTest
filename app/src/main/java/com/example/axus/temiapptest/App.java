@@ -149,7 +149,7 @@ public class App extends Application {
 
             @Override
             public void connectionLost(Throwable cause) {
-
+            Log.d("startMQTT", "connection Lost");
             }
 
             @Override

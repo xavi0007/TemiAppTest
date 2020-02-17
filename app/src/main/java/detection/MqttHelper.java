@@ -33,7 +33,7 @@ public class MqttHelper {
 
     /* Connection variables */
     private static final String TAG = "MqttHelper";
-    public static final String serverUri = "tcp://127.0.0.1:1883";                 // SIT: localhost
+//    public static final String serverUri = "tcp://127.0.0.1:1883";                 // SIT: localhost
 //    public static final String serverUri = "tcp://192.168.21.154:1883";                 // Intel NUC broker
 //    public static final String serverUri = "tcp://192.168.21.57:1883";                 // SIT: localhost
 //    public static final String serverUri = "tcp://172.18.4.36:1883";                 // SIT: KY's Laptop
@@ -41,6 +41,7 @@ public class MqttHelper {
 //    public static final String serverUri = "tcp://172.18.4.44:1883";                   //SIT: Bryan's Laptop
 //    public static final String serverUri = "tcp://192.168.21.241";              // NCS: KY's Laptop
 //    public static final String serverUri = "tcp://192.168.21.36:1883";               // Robot's Adaptor
+    public static final String serverUri = "tcp://192.168.21.236:1883";               // Test ip
 //    public static final String serverUri = "tcp://postman.cloudmqtt.com:11516";   // CloudMQTT
 //    public static final String serverUri = "tcp://192.168.21.161:1883";                 // Bryan Laptop broker
 
