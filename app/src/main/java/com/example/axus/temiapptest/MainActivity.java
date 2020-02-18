@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.speak(ttsRequest);
     }
 
-    public void welcomeSpeach(){
+    public void welcomeSpeech(){
         String str = "Hi, I am you guide";
         TtsRequest ttsRequest = TtsRequest.create(str.trim(), true);
         robot.speak(ttsRequest);
@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
 
             case "complete":
                 if(location.equals("cruzr")){
-                    welcomeSpeach();
+                    welcomeSpeech();
                 }
                 else{
                     robot.speak(TtsRequest.create("Completed", false));
