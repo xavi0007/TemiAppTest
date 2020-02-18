@@ -18,7 +18,7 @@
             android:layout_height="64dp"
             android:layout_gravity="top|start"
             android:layout_margin="17dp"
-            android:translationZ="2dp"
+            android:translationZ="@dimen/_3dp"
             android:background="@drawable/ncs_logo"
             android:text=""
             android:onClick="adminMode"
@@ -107,7 +107,6 @@
         android:id="@+id/eyes"
         android:layout_gravity="center"
         android:background="@color/colorWhite"
-        android:translationZ="1dp"
         android:src="@drawable/eye3" />
 
 

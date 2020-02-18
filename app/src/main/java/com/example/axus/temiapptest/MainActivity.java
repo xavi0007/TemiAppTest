@@ -217,6 +217,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
     }
 
+
+
+
     public void goToDestination(String destination){
         if(robot == null){
             robot =  Robot.getInstance();
@@ -224,6 +227,10 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         for(String location : robot.getLocations()){
             if(location.equals(destination.toLowerCase().trim())){
                 robot.goTo(destination.toLowerCase().trim());
+                speak("I am going to" + destination.toLowerCase().trim() + "now");
+                if(!destination.toLowerCase().trim().equals("homebase")){
+                    speak("Please follow me");
+                }
             }
             else{
                 Log.d("goToDestionation","fail to find location");
@@ -327,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     }
 
     public void speak(String text) {
-        TtsRequest ttsRequest = TtsRequest.create(text, true);
+        TtsRequest ttsRequest = TtsRequest.create(text.trim(), true);
         robot.speak(ttsRequest);
     }
 
