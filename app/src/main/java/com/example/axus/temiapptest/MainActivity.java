@@ -238,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         }
     }
 
+
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -338,6 +340,12 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         robot.speak(ttsRequest);
     }
 
+    public void welcomeSpeach(){
+        String str = "Hi, I am you guide";
+        TtsRequest ttsRequest = TtsRequest.create(str.trim(), true);
+        robot.speak(ttsRequest);
+    }
+
     public BatteryData getBatteryData() {
         BatteryData batteryData = robot.getBatteryData();
         return batteryData;
@@ -388,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     //there should be a listener
     @Override
     public void onGoToLocationStatusChanged(@NotNull String location, @NotNull String status, int descriptionId, @NotNull String description) {
-        Log.d("GoToStatusChanged", "descriptionId=" + descriptionId + ", description=" + description);
+        Log.d("GoToStatusChanged", "descriptionId=" + descriptionId + ", description=" + description + ", status=" + status + ", location" + location);
         switch (status) {
             case "start":
                 robot.speak(TtsRequest.create("Starting", false));
@@ -403,9 +411,14 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
                 break;
 
             case "complete":
-                robot.speak(TtsRequest.create("Completed", false));
-                robot.goTo("home base");
-                robot.speak(TtsRequest.create("Going back to home base", false));
+                if(location.equals("cruzr")){
+                    welcomeSpeach();
+                }
+                else{
+                    robot.speak(TtsRequest.create("Completed", false));
+                    robot.goTo("home base");
+                    robot.speak(TtsRequest.create("Going back to home base", false));
+                }
                 break;
 
             case "abort":
