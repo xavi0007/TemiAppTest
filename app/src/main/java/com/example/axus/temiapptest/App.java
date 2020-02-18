@@ -270,16 +270,16 @@ public class App extends Application {
         robotTask.setHeading(point.getInt("heading"));
         robotTask.setParameter(reader.getJSONObject("parameters"));
         String temp = "false"; // default value
-        if(robotTask.getTaskType().equals("GOTO")) {
-            try {
-                temp = reader.getJSONObject("parameters").getString("detection").equals("true") ? "true":"false";// assume robotmanager sends as string
-            }catch (Exception e){
-                e.printStackTrace();
-                temp = "false";
-            }
-//            Toast.makeText(getApplicationContext(), "detection? " + temp, Toast.LENGTH_SHORT).show();
-            shouldWeRunDetection = Boolean.valueOf(temp); //| MainActivity.logInState;
-        }
+//        if(robotTask.getTaskType().equals("GOTO")) {
+//            try {
+//                temp = reader.getJSONObject("parameters").getString("detection").equals("true") ? "true":"false";// assume robotmanager sends as string
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                temp = "false";
+//            }
+////            Toast.makeText(getApplicationContext(), "detection? " + temp, Toast.LENGTH_SHORT).show();
+//            shouldWeRunDetection = Boolean.valueOf(temp); //| MainActivity.logInState;
+//        }
 //        else{
 //            shouldWeRunDeteection = MainActivity.logInState;
 //        }

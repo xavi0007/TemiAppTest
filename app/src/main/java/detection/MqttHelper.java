@@ -42,7 +42,7 @@ public class MqttHelper {
 //    public static final String serverUri = "tcp://192.168.21.241";              // NCS: KY's Laptop
 //    public static final String serverUri = "tcp://192.168.21.36:1883";               // Robot's Adaptor
 //    public static final String serverUri = "tcp://192.168.21.236:1883";               // local ip
-        public static final String serverUri = "tcp://192.168.21.217:1883"; //My computer's ip
+        public static final String serverUri = "tcp://192.168.21.27:1883"; //My computer's ip
 //    public static final String serverUri = "tcp://postman.cloudmqtt.com:11516";   // CloudMQTT
 //    public static final String serverUri = "tcp://192.168.21.161:1883";                 // Bryan Laptop broker
 
@@ -159,6 +159,7 @@ public class MqttHelper {
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
                     Log.w(TAG, "Failed to connect to: " + serverUri + exception.toString());
+                    connect();
                 }
             });
         } catch (MqttException e) {

@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide(); // hide the title bar
         init();
+        mainActivity = this;
     }
 
     public Context getContext() {
@@ -211,6 +212,9 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     }
 
     public void goToDestination(String destination){
+        if(robot == null){
+            robot =  Robot.getInstance();
+        }
         for(String location : robot.getLocations()){
             if(location.equals(destination.toLowerCase().trim())){
                 robot.goTo(destination.toLowerCase().trim());
