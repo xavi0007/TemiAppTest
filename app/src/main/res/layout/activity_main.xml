@@ -18,6 +18,7 @@
             android:layout_height="64dp"
             android:layout_gravity="top|start"
             android:layout_margin="17dp"
+            android:translationZ="2dp"
             android:background="@drawable/ncs_logo"
             android:text=""
             android:onClick="adminMode"
@@ -99,5 +100,16 @@
             app:srcCompat="@android:drawable/ic_menu_camera"
             android:focusable="true" />
     </LinearLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/eyes"
+        android:layout_gravity="center"
+        android:background="@color/colorWhite"
+        android:translationZ="1dp"
+        android:src="@drawable/eye3" />
+
+
 
 </FrameLayout>

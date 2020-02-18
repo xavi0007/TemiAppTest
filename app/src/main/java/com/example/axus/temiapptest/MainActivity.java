@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     public Button goTo;
     public FloatingActionButton cameraView;
     public Spinner locationSpinner;
-
+    public ImageView eyes;
     //permision variables
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static final int REQUEST_CAMERA = 100;
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
     public void init() {
         verifyStoragePermissions(this);
         checkCameraHardware(this);
+        //init all UI items
         saveLocationInput = findViewById(R.id.saveLocationInput);
         locationSpinner = findViewById(R.id.locationSpinner);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
@@ -100,7 +103,10 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         ncsBtn = (Button) findViewById(R.id.ncsbtn);
         goTo = (Button) findViewById(R.id.btnGoTo);
         cameraView = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        //Hide everything irrelevant
+        eyes = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.eyes);
+
+        //set visibility
+        eyes.setVisibility(View.VISIBLE);
         saveLocationInput.setVisibility(View.GONE);
         btnSaveLocation.setVisibility(View.GONE);
         btnSavedLocations.setVisibility(View.GONE);
@@ -243,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements Robot.NlpListener
         locationSpinner.setVisibility(View.VISIBLE);
         goTo.setVisibility(View.VISIBLE);
         cameraView.setVisibility(View.VISIBLE);
+        eyes.setVisibility(View.GONE);
         robot.showTopBar();
     }
 

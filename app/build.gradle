@@ -50,4 +50,7 @@ dependencies {
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
+    //gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+
 }
