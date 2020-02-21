@@ -1,10 +1,10 @@
-package com.example.axus.temiapptest;
+package com.example.axus.temiapptest.ViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.WindowManager;
 
-import com.robotemi.sdk.Robot;
+import com.example.axus.temiapptest.R;
+import com.example.axus.temiapptest.ViewModel.MainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 

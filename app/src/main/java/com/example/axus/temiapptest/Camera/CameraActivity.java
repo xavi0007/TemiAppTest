@@ -2,7 +2,6 @@ package com.example.axus.temiapptest.Camera;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -11,14 +10,15 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
+import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.axus.temiapptest.R;
 import com.example.axus.temiapptest.App;
+import com.example.axus.temiapptest.R;
 
 import net.majorkernelpanic.streaming.video.ImageUtils;
 import net.majorkernelpanic.streaming.video.Point;

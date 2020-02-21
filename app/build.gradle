@@ -31,8 +31,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.1.0'
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
     // codec library for recording
     implementation 'org.jcodec:jcodec:0.2.3'
     implementation 'org.jcodec:jcodec-android:0.2.3'
@@ -42,7 +41,7 @@ dependencies {
 
     // Tensorflow Lite
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     //For SFTP
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.54'
@@ -51,6 +50,18 @@ dependencies {
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
     //gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+
+    //For MQTT
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    // Reactive Extensions for the JVM
+    implementation 'io.reactivex:rxjava:1.2.10'
+
+    // Reactive Extensions for Android
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    // For GiF robot
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
 
 }

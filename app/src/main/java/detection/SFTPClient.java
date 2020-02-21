@@ -30,7 +30,7 @@ public class SFTPClient extends AsyncTask<Void, Void, Void> {
     private boolean uploadFile = true;
     private SftpProgressMonitor sftpProgressMonitor /*= new SftpProgressMonitor() {
         @Override
-        public void init(int op, String src, String dest, long max) {
+        public void initUI(int op, String src, String dest, long max) {
             Log.i(TAG, "INIT here");
         }
 
