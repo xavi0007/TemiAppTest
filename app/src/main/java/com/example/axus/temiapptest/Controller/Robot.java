@@ -188,6 +188,7 @@ public class Robot {
                 // need to set robot working status to not busy!
                 if (robotTask.getModificationType().equals("CREATE"))
                 {
+                    startRTSP();
                     mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "EXECUTING", "");
                     cancelTask = false;
                     //Start RTSP
