@@ -51,6 +51,7 @@ public class App extends Application {
         super.onCreate();
         context = getApplicationContext();
         app = this;
+        mqtt = new MqttHelper(context);
     }
 
 

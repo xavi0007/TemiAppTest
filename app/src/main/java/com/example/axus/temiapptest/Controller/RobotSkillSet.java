@@ -80,9 +80,6 @@ public class RobotSkillSet extends Robot implements Skillset, adaptorTopics {
         MapModel mapModel = new MapModel();
         int[] displayPosition = {0,0,0};
         BatteryData batteryInfo = temiRobot.getBatteryData();
-        if (null == mapModel ) {
-            return;
-        }
         String mapVersionId = "1";
         Log.d(TAG, "MAIN Battery Info is " + batteryInfo.getBatteryPercentage());
         Log.d(TAG,"MAIN MapVerID is " + mapVersionId);

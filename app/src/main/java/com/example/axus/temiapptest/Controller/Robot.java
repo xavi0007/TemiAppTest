@@ -1,12 +1,18 @@
 package com.example.axus.temiapptest.Controller;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
 import com.example.axus.temiapptest.Model.MapPointHelper;
 import com.example.axus.temiapptest.Model.RobotTask;
+import com.example.axus.temiapptest.R;
 import com.example.axus.temiapptest.ViewModel.MainActivity;
+
+import net.majorkernelpanic.streaming.SessionBuilder;
+import net.majorkernelpanic.streaming.rtsp.RtspServer;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -17,6 +23,7 @@ import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 // This class is for standard all robots to connect Adaptor and also set all the parameters needed for the robot.
 // It should not be changed
@@ -37,6 +44,7 @@ public class Robot {
 
     public Context context;
 
+    public RTSPManager rtspManager;
 
 
 
@@ -44,7 +52,7 @@ public class Robot {
     {
         startMqtt();
         this.robotSkillSet = robotSkillset;
-        //this.context =  context;
+//        this.context =  context;
         // initialise all the mappoint data
         mapPointHelper = new MapPointHelper();
         mapPointHelper.initialiseMapID();
@@ -54,6 +62,10 @@ public class Robot {
     public void startMqtt() {
         mqttHelper = new MqttHelper(context);
         mqttHelper.setCallback(mqttCallbackListnener);
+    }
+
+    public void startRTSP(){
+        rtspManager = new RTSPManager(context, mqttHelper);
     }
 
     /**
@@ -101,7 +113,7 @@ public class Robot {
      * To execute the robot task
      * @param robotTask
      */
-    public void robotTaskExecuteAlgo(final RobotTask robotTask){
+    public void robotTaskExecuteAlgo(final RobotTask robotTask) throws JSONException {
         switch (robotTask.getTaskType()) {
             case "GOTO":
                 if(robotTask.getModificationType().equals("CANCEL"))
@@ -172,9 +184,40 @@ public class Robot {
                     }
                 }
                 break;
+            case "SURVEILLANCE_MODE":
+                // need to set robot working status to not busy!
+                if (robotTask.getModificationType().equals("CREATE"))
+                {
+                    mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "EXECUTING", "");
+                    cancelTask = false;
+                    //Start RTSP
+                    if(robotTask.getParameters().getString("rtsp").equals("true")){ // completed is sent within the waitRtspRun/stop
+                       //Check if rtsp already running
+                        if (rtspManager.isMyServiceRunning(RtspServer.class)){
+                            System.out.println("RTSP server already running!");
+                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already running!");
+                            break;
+                        }else{
+                            context.startService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
+                            rtspManager.getCheckRTSPlooper().postDelayed(rtspManager.waitRtspRun, 500);
+                        }
+                        //Stop RTSP
+                    }else if (robotTask.getParameters().getString("rtsp").equals("false")){
+                        if (!rtspManager.isMyServiceRunning(RtspServer.class)){ // if already not runnning then fail the task
+                            System.out.println("RTSP server already stopped!");
+                            mqttHelper.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "RTSP server already stopped!");
+                            break;
+                        }else{
+                            context.stopService(new Intent(SessionBuilder.getInstance().getContext(), RtspServer.class));
+                            rtspManager.getCheckRTSPlooper().postDelayed(rtspManager.waitRtspStop, 500);
+                        }
+                    }
+                }
 
             default:
                 break;
         }
     }
+
+
 }
