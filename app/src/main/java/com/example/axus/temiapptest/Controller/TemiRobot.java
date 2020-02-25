@@ -39,6 +39,8 @@ import java.util.List;
 
 import static com.example.axus.temiapptest.ViewModel.MainActivity.hideKeyboard;
 
+//All temi initialization here
+
 public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRobotReadyListener, Robot.ConversationViewAttachesListener, Robot.WakeupWordListener, Robot.ActivityStreamPublishListener, Robot.TtsListener, OnBeWithMeStatusChangedListener, OnGoToLocationStatusChangedListener, OnLocationsUpdatedListener, OnDetectionStateChangedListener, Robot.AsrListener, OnConstraintBeWithStatusChangedListener, AdapterView.OnItemSelectedListener{
 
     //variable declaration
@@ -211,7 +213,7 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
                 break;
 
             case "complete":
-                if(location.equals("cruzr")){
+                if(location.equals("Cruzr")){
                     welcomeSpeech();
                 }
                 else{

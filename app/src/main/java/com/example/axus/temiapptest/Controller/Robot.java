@@ -115,7 +115,7 @@ public class Robot {
      */
     public void robotTaskExecuteAlgo(final RobotTask robotTask) throws JSONException {
         switch (robotTask.getTaskType()) {
-            case "GOTO":
+            case "TEMI" :
                 if(robotTask.getModificationType().equals("CANCEL"))
                 {
                     robotSkillSet.cancelNavigation();
