@@ -213,13 +213,17 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
                 break;
 
             case "complete":
-                if(location.equals("Cruzr")){
+                if(location.toLowerCase().equals("gantry")){
                     welcomeSpeech();
                 }
                 else{
                     robot.speak(TtsRequest.create("Completed", false));
-                    robot.goTo("home base");
-                    robot.speak(TtsRequest.create("Going back to home base", false));
+                    if(!location.contains("home base")){
+                        if(!location.equals("gantry")){
+                            robot.goTo("home base");
+                            robot.speak(TtsRequest.create("Going back to home base", false));
+                        }
+                    }
                 }
                 break;
 
