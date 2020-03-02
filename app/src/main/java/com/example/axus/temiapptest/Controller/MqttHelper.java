@@ -38,7 +38,7 @@ public class MqttHelper {
     private static final String username = "ymikzszg";
     private static final String password = "NI6tT_zFV1DF";
 //    private static final String serverUri = "tcp://127.0.0.1:1883";
-private static final String serverUri = "tcp://192.168.21.153";
+private static final String serverUri = "tcp://192.168.21.138";
     private MqttAndroidClient client;
     private String clientId = MqttClient.generateClientId();
     private String publishRobotStatusTopic = "RbStatus";
