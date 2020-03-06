@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +37,8 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.example.axus.temiapptest.ViewModel.MainActivity.hideKeyboard;
 
@@ -49,6 +52,10 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
     RobotSkillSet robotSkillSet;
     public Context context;
 
+    final Handler handler = new Handler();
+    private Timer timer;
+    private TimerTask timerTask;
+
     // ------------- Robot SDK --------------------------------------
     public static int mapModel = 1; // for other function to use
     public static int mSetCurMapSectionId = 0;
@@ -57,9 +64,11 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
     public TemiRobot(Context context){
         robotSkillSet = this;
         robotSkillSet.setTemiRobot(this);
+        //Robot as in Robot from TEMI SDK
         this.robot = Robot.getInstance();
         initRobot();
         super.context = context;
+        startTimer();
     }
 
     public void initRobot(){
@@ -209,17 +218,19 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
                 break;
 
             case "going":
-                robot.speak(TtsRequest.create("Going", false));
+                String speech = "Going" + location;
+                robot.speak(TtsRequest.create(speech, false));
                 break;
 
             case "complete":
-                if(location.toLowerCase().equals("gantry")){
+                mqttHelper.publishTaskStatus("TEMI","COMPLETED" , "Completed");
+                if(location.toLowerCase().equals("cruzr")){
                     welcomeSpeech();
                 }
                 else{
                     robot.speak(TtsRequest.create("Completed", false));
                     if(!location.contains("home base")){
-                        if(!location.equals("gantry")){
+                        if(!location.toLowerCase().equals("cruzr")){
                             robot.goTo("home base");
                             robot.speak(TtsRequest.create("Going back to home base", false));
                         }
@@ -291,7 +302,7 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
                 }
             }
             else{
-                Log.d("goToDestionation","fail to find location");
+                Log.d("goToDestination","fail to find location");
             }
         }
     }
@@ -362,4 +373,32 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
         TemiRobot.mapModel = mapModel;
     }
 
+    public void startTimer() {
+        //set a new Timer
+        timer = new Timer();
+        //initialize the TimerTask's job
+        initializeTimerTask();
+        //schedule the timer, after the first wait 8s the TimerTask will run every 300000
+        timer.schedule(timerTask, 50000, 100000); //
+    }
+
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+
+                //use a handler to run a toast that shows the current timestamp
+                handler.post(new Runnable() {
+                    public void run() {
+                        if (mqttHelper.isMqttConnected()) {
+                            robotSkillSet.startPublishingRobotStatus();
+//                            Log.d("publishing", "publising robot status");
+                        }
+
+                    }
+                });
+            }
+
+        };
+    }
 }

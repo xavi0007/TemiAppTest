@@ -37,7 +37,6 @@ public class RobotSkillSet extends Robot implements Skillset, adaptorTopics {
                 initialiseRobot(temiRobot);
             }
         }));
-
     }
     @Override
     public void gotoBroadcastSkill() {
@@ -78,14 +77,14 @@ public class RobotSkillSet extends Robot implements Skillset, adaptorTopics {
     public void generateRobotStatusTopic() {
         // Modify this part to interface with RobotSDK
         MapModel mapModel = new MapModel();
-        int[] displayPosition = {0,0,0};
+        Double[] displayPosition = { (double)1,(double)1,(double)1};
         BatteryData batteryInfo = temiRobot.getBatteryData();
-        String mapVersionId = "1";
-        Log.d(TAG, "MAIN Battery Info is " + batteryInfo.getBatteryPercentage());
-        Log.d(TAG,"MAIN MapVerID is " + mapVersionId);
-        Log.d(TAG, "MAIN Position X is " + displayPosition[0]);
-        Log.d(TAG, "MAIN Position Y is " + displayPosition[1]);
-        Log.d(TAG, "MAIN Position Heading is " + displayPosition[2]);
+        String mapVersionId = "546c3055-6742-4ec3-8fb9-c2101fe50a7a";
+//        Log.d(TAG, "MAIN Battery Info is " + batteryInfo.getBatteryPercentage());
+//        Log.d(TAG,"MAIN MapVerID is " + mapVersionId);
+//        Log.d(TAG, "MAIN Position X is " + displayPosition[0]);
+//        Log.d(TAG, "MAIN Position Y is " + displayPosition[1]);
+//        Log.d(TAG, "MAIN Position Heading is " + displayPosition[2]);
         mqttHelper.publishRobotStatus(batteryInfo.getBatteryPercentage(), mapVersionId, displayPosition[0], displayPosition[1], displayPosition[2]);
     }
 
@@ -116,7 +115,7 @@ public class RobotSkillSet extends Robot implements Skillset, adaptorTopics {
     }
 
     // --------------- Handler to publish Robot Staus Topics --------------
-    private static final int postRobotStatusinterval = 1000; // Every 1 second
+    private static final int postRobotStatusinterval = 1000; // Wait 1 second
     Handler mHandlerPostRobotStatus = new Handler();
     // publish robot status
     //Async Task

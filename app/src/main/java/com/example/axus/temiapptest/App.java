@@ -167,56 +167,6 @@ public class App extends Application {
         return (x*x+y*y) > CAMERADISTANCETODETECT;
 
     }
-    // Check if a service is running
-    public boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-/* RTSP */
-
-    Runnable waitRtspRun= new Runnable() { // this delay is to ensure RTSP is started before RFM is informed (no feedback?)
-        @Override
-        public void run() {
-            // send robotmanager completed
-            if (isMyServiceRunning(RtspServer.class)){
-//                TtsPlay("Surveillance mode activate");
-                mqtt.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "");
-                try{
-                    checkRTSPlooper.removeCallbacks(waitRtspRun);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }else{
-                checkRTSPlooper.postDelayed(waitRtspRun, 500);
-            }
-        }
-    };
-
-    Runnable waitRtspStop = new Runnable() { // this delay is to ensure RTSP is started before RFM is informed (no feedback?)
-        @Override
-        public void run() {
-            // send robotmanager completed
-            if (!isMyServiceRunning(RtspServer.class)){
-//                TtsPlay("Surveillance mode in stand-by");
-                mqtt.publishTaskStatus("SURVEILLANCE_MODE", "COMPLETED", "");
-                try{
-                    checkRTSPlooper.removeCallbacks(waitRtspStop);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }else{
-                checkRTSPlooper.postDelayed(waitRtspStop, 500);
-            }
-        }
-    };
-
-
 
 
 

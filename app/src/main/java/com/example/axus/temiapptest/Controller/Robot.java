@@ -89,6 +89,7 @@ public class Robot {
             if (topic.equals(mqttHelper.subscribeTaskTopic)) {
                 getTask(message);
                 System.out.println("MQTT in Robot.Java" + message);
+                System.out.println(topic);
             }
         }
 

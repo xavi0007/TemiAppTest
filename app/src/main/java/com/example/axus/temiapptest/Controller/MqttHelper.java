@@ -37,25 +37,25 @@ public class MqttHelper {
 
     private static final String username = "ymikzszg";
     private static final String password = "NI6tT_zFV1DF";
-//    private static final String serverUri = "tcp://127.0.0.1:1883";
-private static final String serverUri = "tcp://192.168.21.138";
+    private static final String serverUri = "tcp://127.0.0.1:1883";
+    //private static final String serverUri = "tcp://192.168.21.82";
     private MqttAndroidClient client;
     private String clientId = MqttClient.generateClientId();
     private String publishRobotStatusTopic = "RbStatus";
-    private String publishTaskStatusTopic = "RbTaskStatus";
-    private String publishTaskRequestTopic = "RbTaskRequest";
+    public String publishTaskStatusTopic = "RbTaskStatus";
+    public String publishTaskRequestTopic = "RbTaskRequest";
     public String publishRobotNotificationTopic = "RbNotification";
     public String subscribeTaskTopic = "RtTask";
     public String subscribeTaskRequestStatusTopic = "RbTaskRequestStatus";
     public String subscribeFaqTopic = "test/message";
     public String subscribeConciergeProfileTopic = "test/main";
-
-
+    public Context context;
     /**
      * Setup an MQTT Object to establish a new connection to the robot adaptor
      * @param context
      */
     public MqttHelper(Context context) {
+        this.context = context;
         client = new MqttAndroidClient(context, serverUri, clientId, new MemoryPersistence(), MqttAndroidClient.Ack.AUTO_ACK);
         client.setCallback(new MqttCallbackExtended() {
             @Override
@@ -124,6 +124,7 @@ private static final String serverUri = "tcp://192.168.21.138";
                     client.setBufferOpts(disconnectedBufferOptions);
                     Log.w(TAG, "Connection is successful");
                     subscribeToTopic();
+
                 }
 
                 @Override
@@ -154,10 +155,12 @@ private static final String serverUri = "tcp://192.168.21.138";
             obj.put("positionX", positionX);
             obj.put("positionY", positionY);
             obj.put("heading", heading);
-
+            obj.put("state",  "IDLE");
+            obj.put("stateDetails", "");
             MqttMessage message = new MqttMessage();
             message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
             client.publish(publishRobotStatusTopic, message);
+//            Log.d("publishRobotStatus", "publish Status successs in publishing");
         } catch (MqttException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -219,12 +222,16 @@ private static final String serverUri = "tcp://192.168.21.138";
     public void publishTaskStatus(String taskTypeName, String taskStatusType, String taskStatusDetails) {
         try {
             JSONObject obj = new JSONObject();
+            JSONObject taskStatusDetailsObj = new JSONObject();
+            taskStatusDetailsObj.put("details1 " , taskStatusDetails);
             obj.put("taskType", taskTypeName);
             obj.put("taskStatusType", taskStatusType);
-            obj.put("taskStatusDetails", taskStatusDetails);
+            obj.put("errMsg", "");
+            obj.put("taskStatusDetails", taskStatusDetailsObj);
             MqttMessage message = new MqttMessage();
             message.setPayload(obj.toString().getBytes(StandardCharsets.UTF_8));
             client.publish(publishTaskStatusTopic, message);
+            Log.d("PublishTaskStatus", obj.toString());
         } catch (MqttException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -268,9 +275,9 @@ private static final String serverUri = "tcp://192.168.21.138";
         //String subcriptionTopic1 = "test/main";
         try {
             //client.subscribe(subcriptionTopic1,0);
-            client.subscribe(subscribeFaqTopic,0);
-            client.subscribe(subscribeConciergeProfileTopic,0);
-            client.subscribe(subscribeTaskRequestStatusTopic,0);
+            //client.subscribe(subscribeFaqTopic,0);
+            //client.subscribe(subscribeConciergeProfileTopic,0);
+            //client.subscribe(subscribeTaskRequestStatusTopic,0);
             client.subscribe(subscribeTaskTopic, 0, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -289,13 +296,14 @@ private static final String serverUri = "tcp://192.168.21.138";
         }
     }
 
+
     public RobotTask readTask(JSONObject reader) throws JSONException {
         RobotTask robotTask = new RobotTask();
         robotTask.setModificationType(reader.getString("modificationType"));
         robotTask.setTaskType(reader.getString("taskType"));
         robotTask.setAbort(reader.getBoolean("abort"));
         robotTask.setTotalTaskNo((reader.getInt("totalTaskNo")));
-        robotTask.setCurrentTaskNo((reader.getInt("currentTaskNo")));
+        robotTask.setCurrentTaskNo((reader.getInt("currTaskNo")));
         JSONObject point = reader.getJSONObject("point");
         robotTask.setMapVerId(point.getString("mapVerID"));
         robotTask.setPositionName(point.getString("positionName"));
