@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,8 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.example.axus.temiapptest.R;
+import com.example.axus.temiDemoSolo.R;
 import com.example.axus.temiapptest.ViewModel.MainActivity;
 import com.robotemi.sdk.BatteryData;
 import com.robotemi.sdk.MediaObject;
@@ -37,6 +39,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,6 +64,9 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
     public static int mSetCurMapSectionId = 0;
     public static int mSetLocalisedId = 0;
 
+    // -------------------Android TTS------------------------
+    TextToSpeech tts;
+
     public TemiRobot(Context context){
         robotSkillSet = this;
         robotSkillSet.setTemiRobot(this);
@@ -69,6 +75,14 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
         initRobot();
         super.context = context;
         startTimer();
+        tts=new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.UK);
+                }
+            }
+        });
     }
 
     public void initRobot(){
@@ -224,19 +238,24 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
 
             case "complete":
                 mqttHelper.publishTaskStatus("TEMI","COMPLETED" , "Completed");
-                if(location.toLowerCase().equals("cruzr")){
-                    welcomeSpeech();
+                String local = location.toLowerCase().trim();
+                switch (local){
+                    case "fishtank":
+                        //ttsrequest.create('text', shown on conversation layer)
+                        robot.speak(TtsRequest.create("This is the fish tank", true));
+                        tts.speak("We have many fishes, this includes goldfish", TextToSpeech.QUEUE_FLUSH, null, "1");
+                        Toast.makeText(context, "We have many fishes, this includes goldfish", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "tv":
+                        robot.speak(TtsRequest.create("This is a TV", true));
+                        tts.speak("it shows a tv programme", TextToSpeech.QUEUE_FLUSH, null, "1");
+                        Toast.makeText(context, "TV", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        tts.speak("default", TextToSpeech.QUEUE_FLUSH, null, "1");
+                        Toast.makeText(context, "nothing to see", Toast.LENGTH_SHORT).show();
+                        break;
                 }
-                else{
-                    robot.speak(TtsRequest.create("Completed", false));
-                    if(!location.contains("home base")){
-                        if(!location.toLowerCase().equals("cruzr")){
-                            robot.goTo("home base");
-                            robot.speak(TtsRequest.create("Going back to home base", false));
-                        }
-                    }
-                }
-                break;
 
             case "abort":
                 robot.speak(TtsRequest.create("Cancelled", false));
@@ -274,7 +293,7 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
     }
 
     public void welcomeSpeech(){
-        String str = "Hi, I am you guide";
+        String str = "Hi, I am your guide";
         TtsRequest ttsRequest = TtsRequest.create(str.trim(), true);
         robot.speak(ttsRequest);
     }
@@ -401,4 +420,7 @@ public class TemiRobot extends RobotSkillSet implements Robot.NlpListener, OnRob
 
         };
     }
+
+
+
 }
